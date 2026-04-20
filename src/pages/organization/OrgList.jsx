@@ -1,6 +1,6 @@
 import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { Edit2, Trash2, Eye, X, Check, AlertTriangle, ArrowLeft } from 'lucide-react';
-import StatusToggle from '../../components/common/StatusToggle';
+import StatusToggle from '../../components/ui/StatusToggle';
 import { generateOrgInitialData, INITIAL_SANGHS } from './orgData';
 
 const OrgTable = forwardRef(({ activeTab, searchTerm, itemsPerPage, currentPage, setTotalEntries, onDataChange }, ref) => {

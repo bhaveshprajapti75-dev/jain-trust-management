@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
-import Button from '../../components/common/Button'
+import Button from '../../components/ui/Button'
 import UserDocuments from '../../components/users/UserDocuments'
 import { INITIAL_USERS, INITIAL_USER_DOCS } from './userData.jsx'
 

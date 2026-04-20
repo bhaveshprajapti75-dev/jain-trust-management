@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { Users, HandHeart, Gem } from 'lucide-react'
-import PageHeader from '../../components/common/PageHeader'
-import StatCard from '../../components/common/StatCard'
+import PageHeader from '../../components/ui/PageHeader'
+import StatCard from '../../components/ui/StatCard'
 
 const GROWTH = [
   { year: '2021', count: 4000 }, { year: '2022', count: 4200 },

@@ -1,11 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
 import { Landmark, Eye, Trash2, CheckCircle2, Search } from "lucide-react";
-import CommonPageLayout from "../../../components/common/CommonPageLayout";
-import Table from "../../../components/common/Table";
-import ConfirmModal from "../../../components/common/ConfirmModal";
-import FilterButton from "../../../components/common/FilterButton";
-import Modal from "../../../components/common/Modal";
-import Pagination from "../../../components/common/Pagination";
+import CommonPageLayout from "../../../components/ui/CommonPageLayout";
+import Table from "../../../components/ui/Table";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
+import FilterButton from "../../../components/ui/FilterButton";
+import Modal from "../../../components/ui/Modal";
+import Pagination from "../../../components/ui/Pagination";
+import { sanghService, authService } from "../../../services/apiService";
 
 export default function LinkedTrusts() {
   const [trusts, setTrusts] = useState([]);
@@ -13,68 +14,36 @@ export default function LinkedTrusts() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ status: "", category: "" });
 
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
   const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
   const [viewModal, setViewModal] = useState({ open: false, data: null });
 
+  const fetchLinkedTrusts = async () => {
+    try {
+      setLoading(true);
+      // Fetch Profile to get assigned Sangh ID
+      const profile = await authService.getProfile();
+      const scopeId = 
+        profile?.user?.scope_id || 
+        profile?.scope_id || 
+        profile?.user?.sangh_id || 
+        profile?.sangh_id ||
+        profile?.sangh || 
+        profile?.user?.sangh;
+
+      if (!scopeId) return;
+      
+      const data = await sanghService.getLinkedTrusts(scopeId);
+      setTrusts(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch trusts from Postgres", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchLinkedTrusts = async () => {
-      try {
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 150)); // Ultra-fast shimmer
-        const stored = localStorage.getItem("linked_trusts_data");
-        const defaultData = [
-          {
-            id: 1,
-            name: "Anandji Kalyanji Trust",
-            category: "General",
-            phone: "9876543210",
-            status: "Active",
-          },
-          {
-            id: 2,
-            name: "Palitana Teerth Trust",
-            category: "Religious",
-            phone: "9825011223",
-            status: "Active",
-          },
-          {
-            id: 3,
-            name: "Jain Education Fund",
-            category: "Education",
-            phone: "9988776655",
-            status: "Inactive",
-          },
-          {
-            id: 4,
-            name: "Mahavir Seva Trust",
-            category: "Welfare",
-            phone: "9554433221",
-            status: "Active",
-          },
-          {
-            id: 5,
-            name: "Shantinath Charitable Trust",
-            category: "Welfare",
-            phone: "9443322110",
-            status: "Inactive",
-          },
-        ];
-        const data = stored ? JSON.parse(stored) : defaultData;
-        setTrusts(data);
-        if (!stored)
-          localStorage.setItem(
-            "linked_trusts_data",
-            JSON.stringify(defaultData),
-          );
-      } catch (error) {
-        console.error("Failed to fetch trusts", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchLinkedTrusts();
   }, []);
 
@@ -117,19 +86,18 @@ export default function LinkedTrusts() {
   ];
 
   const handleToggleStatus = (id) => {
-    const updated = trusts.map((t) =>
-      t.id === id
-        ? { ...t, status: t.status === "Active" ? "Inactive" : "Active" }
-        : t,
-    );
-    setTrusts(updated);
-    localStorage.setItem("linked_trusts_data", JSON.stringify(updated));
+    const trust = trusts.find(t => t.id === id);
+    const nextStatus = trust.status === "Active" ? "Inactive" : "Active";
+    // We can use a general update method if available or specific toggle
+    sanghService.updateTrust(id, { status: nextStatus })
+      .then(() => fetchLinkedTrusts())
+      .catch(err => console.error("Toggle fail", err));
   };
 
   const handleDelete = () => {
-    const updated = trusts.filter((t) => t.id !== deleteModal.id);
-    setTrusts(updated);
-    localStorage.setItem("linked_trusts_data", JSON.stringify(updated));
+    sanghService.removeTrust(deleteModal.id)
+      .then(() => fetchLinkedTrusts())
+      .catch(err => console.error("Remove fail", err));
     setDeleteModal({ open: false, id: null });
   };
 
@@ -219,48 +187,47 @@ export default function LinkedTrusts() {
 
   return (
     <CommonPageLayout title="Linked Trusts" stats={stats}>
-      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="w-full sm:max-w-sm">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by trust name..."
-                className="w-full h-[36px] pl-11 pr-10 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-50 outline-none transition-all duration-200"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <FilterButton
-              dataCount={filteredTrusts.length}
-              filters={filters}
-              options={filterOptions}
-              onChange={handleFilterChange}
-              onClear={clearFilters}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div className="w-full sm:max-w-sm">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by trust name..."
+              className="w-full h-[34px] pl-11 pr-10 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-[#10b981] focus:ring-2 focus:ring-teal-50 outline-none transition-all duration-200"
             />
           </div>
         </div>
-
-        <Table
-          columns={columns}
-          data={paginatedTrusts}
-          loading={loading}
-          skipCard
-          emptyMessage="No linked trusts found"
-          emptyDescription="Try adjusting your search or add new trusts."
-        />
-
-        <Pagination
-          currentPage={currentPage}
-          totalRecords={filteredTrusts.length}
-          recordsPerPage={recordsPerPage}
-          onPageChange={setCurrentPage}
-          onRecordsPerPageChange={setRecordsPerPage}
-        />
+        <div className="flex items-center gap-2">
+          <FilterButton
+            dataCount={filteredTrusts.length}
+            filters={filters}
+            options={filterOptions}
+            onChange={handleFilterChange}
+            onClear={clearFilters}
+          />
+        </div>
       </div>
+
+      <Table
+        columns={columns}
+        data={paginatedTrusts}
+        loading={loading}
+        skipCard
+        emptyMessage="No linked trusts found"
+        emptyDescription="Try adjusting your search or add new trusts."
+      />
+
+      <Pagination
+        currentPage={currentPage}
+        totalRecords={filteredTrusts.length}
+        recordsPerPage={recordsPerPage}
+        onPageChange={setCurrentPage}
+        onRecordsPerPageChange={setRecordsPerPage}
+      />
+
 
       {/* Delete Confirmation Modal */}
       <ConfirmModal

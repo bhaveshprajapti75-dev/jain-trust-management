@@ -1,7 +1,7 @@
 import { Plus } from 'lucide-react'
-import PageHeader from '../../components/common/PageHeader'
-import Button from '../../components/common/Button'
-import Table from '../../components/common/Table'
+import PageHeader from '../../components/ui/PageHeader'
+import Button from '../../components/ui/Button'
+import Table from '../../components/ui/Table'
 
 const DATA = [{ id: 1, name: 'Shree Chandraprabhu Bhagwan', derasar: 'Chandraprabhu Derasar', type: 'Mulnayak', height: '3.5 feet', material: 'Panchdhatu' }]
 const columns = [

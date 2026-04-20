@@ -93,7 +93,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
+          className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -102,7 +102,7 @@ export default function Pagination({
           <button
             key={num}
             onClick={() => onPageChange(num)}
-            className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-[13px] font-medium transition-all border border-slate-200"
+            className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-[13px] font-medium transition-all border border-slate-200"
             style={currentPage === num ? { backgroundColor: '#10b981', color: 'white' } : { color: '#475569' }}
             onMouseEnter={(e) => {
               if (currentPage !== num) {
@@ -124,7 +124,7 @@ export default function Pagination({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="w-[32px] h-[32px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
+          className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
         >
           <ChevronRight className="w-4 h-4" />
         </button>

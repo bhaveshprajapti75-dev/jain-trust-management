@@ -1,9 +1,9 @@
 import { useState, useImperativeHandle, forwardRef, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Edit2, Trash2, Eye, X, AlertTriangle } from 'lucide-react'
-import StatusToggle from '../../components/common/StatusToggle'
-import CustomDropdown from '../../components/common/CustomDropdown'
-import { useToast } from '../../components/common/Toast'
+import StatusToggle from '../../components/ui/StatusToggle'
+import CustomDropdown from '../../components/ui/CustomDropdown'
+import { useToast } from '../../components/ui/Toast'
 
 const LOCATION_STORAGE_KEY = 'location_v_final_production'
 const MODAL_CLOSED_STATE = { isOpen: false, type: '', data: null }

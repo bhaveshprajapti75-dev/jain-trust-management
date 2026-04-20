@@ -22,16 +22,17 @@ import {
   ChevronDown,
   Contact,
 } from "lucide-react";
-import CommonPageLayout from "../../../components/common/CommonPageLayout";
-import Table from "../../../components/common/Table";
-import ConfirmModal from "../../../components/common/ConfirmModal";
-import FilterButton from "../../../components/common/FilterButton";
-import Modal from "../../../components/common/Modal";
-import Input from "../../../components/common/Input";
-import Button from "../../../components/common/Button";
-import Pagination from "../../../components/common/Pagination";
-import DatePicker from "../../../components/common/DatePicker";
-import { useToast } from "../../../components/common/Toast";
+import CommonPageLayout from "../../../components/ui/CommonPageLayout";
+import Table from "../../../components/ui/Table";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
+import FilterButton from "../../../components/ui/FilterButton";
+import Modal from "../../../components/ui/Modal";
+import Input from "../../../components/ui/Input";
+import Button from "../../../components/ui/Button";
+import Pagination from "../../../components/ui/Pagination";
+import DatePicker from "../../../components/ui/DatePicker";
+import { useToast } from "../../../components/ui/Toast";
+import { sanghService, authService } from "../../../services/apiService";
 
 const INITIAL_FORM = {
   name: "",
@@ -59,65 +60,36 @@ export default function CommitteeMembers() {
   const [saving, setSaving] = useState(false);
   const showToast = useToast();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("sangh_committee_members");
-    if (stored) {
-      setMembers(JSON.parse(stored));
+  const fetchMembers = async () => {
+    try {
+      setLoading(true);
+      
+      // Step 1: Fetch Profile to get assigned Sangh ID
+      const profile = await authService.getProfile();
+      const scopeId = 
+        profile?.user?.scope_id || 
+        profile?.scope_id || 
+        profile?.user?.sangh_id || 
+        profile?.sangh_id ||
+        profile?.sangh || 
+        profile?.user?.sangh;
+
+      if (!scopeId) {
+        setMembers([]);
+        return;
+      }
+      
+      const data = await sanghService.getCommitteeMembers(scopeId);
+      setMembers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch committee members", error);
+    } finally {
       setLoading(false);
-    } else {
-      setTimeout(() => {
-        const defaultData = [
-          {
-            id: 1,
-            name: "Rajesh Shah",
-            role: "President",
-            phone: "9876543210",
-            email: "rajesh.shah@example.com",
-            status: "Active",
-            addedAt: "2024-01-15",
-            gender: "Male",
-            birthDate: "12/05/1980",
-            bloodGroup: "O+",
-            city: "Mumbai",
-            address: "123, Jain Society, Borivali West",
-          },
-          {
-            id: 2,
-            name: "Suresh Mehta",
-            role: "Secretary",
-            phone: "9825011223",
-            email: "suresh.m@example.com",
-            status: "Active",
-            addedAt: "2024-02-10",
-            gender: "Male",
-            birthDate: "22/08/1985",
-            bloodGroup: "A+",
-            city: "Ahmedabad",
-            address: "45, Adarsh Nagar, Satellite",
-          },
-          {
-            id: 3,
-            name: "Amit Jain",
-            role: "Treasurer",
-            phone: "9988776655",
-            email: "amit.jain@example.com",
-            status: "Active",
-            addedAt: "2024-03-05",
-            gender: "Male",
-            birthDate: "05/12/1990",
-            bloodGroup: "B+",
-            city: "Indore",
-            address: "12, Mahaveer Marg",
-          },
-        ];
-        setMembers(defaultData);
-        localStorage.setItem(
-          "sangh_committee_members",
-          JSON.stringify(defaultData),
-        );
-        setLoading(false);
-      }, 300);
     }
+  };
+
+  useEffect(() => {
+    fetchMembers();
   }, []);
 
   const filteredMembers = useMemo(
@@ -145,13 +117,13 @@ export default function CommitteeMembers() {
     },
     {
       title: "Active Member",
-      value: members.filter((m) => m.status === "Active").length,
+      value: members.filter((m) => m.status?.toUpperCase() === "ACTIVE").length,
       icon: UserCheck,
       color: "emerald",
     },
     {
       title: "Inactive Member",
-      value: members.filter((m) => m.status === "Inactive").length,
+      value: members.filter((m) => m.status?.toUpperCase() === "INACTIVE").length,
       icon: UserMinus,
       color: "rose",
     },
@@ -167,7 +139,7 @@ export default function CommitteeMembers() {
 
   const updateMembers = (updated) => {
     setMembers(updated);
-    localStorage.setItem("sangh_committee_members", JSON.stringify(updated));
+    sessionStorage.setItem("sangh_committee_members", JSON.stringify(updated));
   };
 
   const handleDelete = () => {
@@ -235,7 +207,8 @@ export default function CommitteeMembers() {
       render: (s, row) => (
         <button
           onClick={() => {
-            const nextStatus = s === "Active" ? "Inactive" : "Active";
+            const isActive = s?.toUpperCase() === "ACTIVE";
+            const nextStatus = isActive ? "INACTIVE" : "ACTIVE";
             updateMembers(
               members.map((m) =>
                 m.id === row.id ? { ...m, status: nextStatus } : m,
@@ -243,10 +216,10 @@ export default function CommitteeMembers() {
             );
             showToast(`Status set to ${nextStatus} successfully!`, "success");
           }}
-          className={`relative inline-flex h-5 w-9 items-center rounded-xl px-[3px] transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-teal-500/20 ${s === "Active" ? "bg-emerald-500" : "bg-slate-300"}`}
+          className={`relative inline-flex h-5 w-9 items-center rounded-xl px-[3px] transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-teal-500/20 ${s?.toUpperCase() === "ACTIVE" ? "bg-emerald-500" : "bg-slate-300"}`}
         >
           <span
-            className={`h-3.5 w-3.5 rounded-xl bg-white shadow-sm transition-all duration-300 ${s === "Active" ? "translate-x-[16px]" : "translate-x-0"}`}
+            className={`h-3.5 w-3.5 rounded-xl bg-white shadow-sm transition-all duration-300 ${s?.toUpperCase() === "ACTIVE" ? "translate-x-[16px]" : "translate-x-0"}`}
           />
         </button>
       ),
@@ -286,68 +259,67 @@ export default function CommitteeMembers() {
 
   return (
     <CommonPageLayout title="Committee Members" stats={stats}>
-      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="w-full sm:max-w-sm relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by name..."
-              className="w-full h-[36px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] outline-none focus:ring-2 focus:ring-teal-50 focus:border-teal-500 transition-all font-medium"
-            />
-          </div>
-          <div className="flex gap-2">
-            <FilterButton
-              dataCount={filteredMembers.length}
-              filters={filters}
-              options={[
-                {
-                  key: "status",
-                  placeholder: "Status",
-                  items: [
-                    { label: "Active", value: "Active" },
-                    { label: "Inactive", value: "Inactive" },
-                  ],
-                },
-                {
-                  key: "role",
-                  placeholder: "Position",
-                  items: [...new Set(members.map((m) => m.role))].map((r) => ({
-                    label: r,
-                    value: r,
-                  })),
-                },
-              ]}
-              onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
-              onClear={() => setFilters({ status: "", role: "" })}
-            />
-            <button
-              onClick={() => setModal({ type: "add", data: null })}
-              className="h-[36px] flex items-center gap-2 bg-teal-600 text-white px-4 rounded-xl text-[13px] font-bold hover:bg-teal-700 transition-all shadow-md shadow-teal-50"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Member</span>
-            </button>
-          </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+        <div className="w-full sm:max-w-sm relative group">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by name..."
+            className="w-full h-[34px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] outline-none focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] transition-all font-medium"
+          />
         </div>
-
-        <Table
-          columns={columns}
-          data={paginatedMembers}
-          loading={loading}
-          skipCard
-          emptyMessage="No members found"
-        />
-        <Pagination
-          currentPage={currentPage}
-          totalRecords={filteredMembers.length}
-          recordsPerPage={recordsPerPage}
-          onPageChange={setCurrentPage}
-          onRecordsPerPageChange={setRecordsPerPage}
-        />
+        <div className="flex gap-2">
+          <FilterButton
+            dataCount={filteredMembers.length}
+            filters={filters}
+            options={[
+              {
+                key: "status",
+                placeholder: "Status",
+                items: [
+                  { label: "Active", value: "Active" },
+                  { label: "Inactive", value: "Inactive" },
+                ],
+              },
+              {
+                key: "role",
+                placeholder: "Position",
+                items: [...new Set(members.map((m) => m.role))].map((r) => ({
+                  label: r,
+                  value: r,
+                })),
+              },
+            ]}
+            onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
+            onClear={() => setFilters({ status: "", role: "" })}
+          />
+          <Button
+            icon={Plus}
+            onClick={() => setModal({ type: "add", data: null })}
+            className="h-[34px] text-[13px] font-bold shadow-md shadow-teal-50"
+          >
+            Add Member
+          </Button>
+        </div>
       </div>
+
+      <Table
+        columns={columns}
+        data={paginatedMembers}
+        loading={loading}
+        skipCard
+        emptyMessage="No members found"
+      />
+      <Pagination
+        currentPage={currentPage}
+        totalRecords={filteredMembers.length}
+        recordsPerPage={recordsPerPage}
+        onPageChange={setCurrentPage}
+        onRecordsPerPageChange={setRecordsPerPage}
+      />
+
 
       {/* Unified Add/Edit Modal */}
       <Modal

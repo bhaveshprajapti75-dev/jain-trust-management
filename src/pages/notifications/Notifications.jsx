@@ -1,7 +1,7 @@
 import { Bell, CheckCircle } from 'lucide-react'
-import PageHeader from '../../components/common/PageHeader'
-import Button from '../../components/common/Button'
-import StatusBadge from '../../components/common/StatusBadge'
+import PageHeader from '../../components/ui/PageHeader'
+import Button from '../../components/ui/Button'
+import StatusBadge from '../../components/ui/StatusBadge'
 
 const NOTIFS = [
   { id: 1, title: 'New Donation Received', desc: 'Rajesh Shah donated ₹51,000 for Devdravya', time: '2 hours ago', status: 'Unread' },

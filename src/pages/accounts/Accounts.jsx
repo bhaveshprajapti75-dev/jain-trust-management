@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Landmark, Receipt, TrendingUp, TrendingDown, Plus } from 'lucide-react'
-import Button from '../../components/common/Button'
-import EmptyState from '../../components/common/EmptyState'
-import CommonCard from '../../components/common/CommonCard'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import Button from '../../components/ui/Button'
+import EmptyState from '../../components/ui/EmptyState'
+import CommonCard from '../../components/ui/CommonCard'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 
 const DATA = [
   { id: 1, ledger: 'Central Trust Ledger', sangh: 'Sathandji Kalyanji Sangh', balance: '?18,45,000', income: '?3,25,000', expense: '?1,42,000', status: 'Active' },

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Save, RotateCcw, User, HandHeart, FileText, CreditCard } from 'lucide-react'
-import PageHeader from '../../components/common/PageHeader'
-import Button from '../../components/common/Button'
-import Input from '../../components/common/Input'
+import PageHeader from '../../components/ui/PageHeader'
+import Button from '../../components/ui/Button'
+import Input from '../../components/ui/Input'
 
 export default function AddDonation() {
   const navigate = useNavigate()

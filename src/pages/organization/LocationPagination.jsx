@@ -1,5 +1,5 @@
 import React from 'react'
-import CustomDropdown from '../../components/common/CustomDropdown'
+import CustomDropdown from '../../components/ui/CustomDropdown'
 
 export default function LocationPagination({
   currentPage,

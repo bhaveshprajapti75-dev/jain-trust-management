@@ -2,7 +2,7 @@ import { Loader2 } from "lucide-react";
 
 const variants = {
   primary:
-    "bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm shadow-emerald-700/20",
+    "bg-[#10b981] text-white hover:bg-[#059669] shadow-sm shadow-[#10b981]/20",
   secondary:
     "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50",
   danger:
@@ -12,7 +12,7 @@ const variants = {
 
 const sizes = {
   sm: "px-3 h-8 text-xs rounded-lg gap-1.5",
-  md: "px-4 h-10 text-sm rounded-lg gap-2",
+  md: "px-4 h-[34px] text-sm rounded-lg gap-2",
   lg: "px-6 h-12 text-base rounded-lg gap-2.5",
 };
 

@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import PageHeader from '../../components/common/PageHeader'
+import PageHeader from '../../components/ui/PageHeader'
 
 const DATA = [{ month: 'Jan', expense: 68000 }, { month: 'Feb', expense: 95000 }, { month: 'Mar', expense: 72000 }]
 

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Upload } from 'lucide-react'
-import Button from '../common/Button'
-import Input from '../common/Input'
-import PermissionChip from '../common/PermissionChip'
+import Button from '../ui/Button'
+import Input from '../ui/Input'
+import PermissionChip from '../ui/PermissionChip'
 import { getCount, PERM_GROUPS } from '../../pages/RolesAndPermissions/RoleData'
 
 const DOC_OPTIONS = ['Aadhaar Card', 'PAN Card', 'Photo', 'ID Card']

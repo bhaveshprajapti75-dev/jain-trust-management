@@ -4,9 +4,9 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   BarChart, Bar, Legend 
 } from "recharts";
-import StatCard from "../../components/common/StatCard";
-import Button from "../../components/common/Button";
-import Card from "../../components/common/Card";
+import StatCard from "../../components/ui/StatCard";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 
 // Mock Data
 const MEMBER_DATA = [

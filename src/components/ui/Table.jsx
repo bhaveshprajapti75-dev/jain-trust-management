@@ -27,7 +27,7 @@ export default function Table({  // Add 'default' here
   }
 
   const tableWrapperClass = skipCard 
-    ? "overflow-hidden" 
+    ? "overflow-hidden border border-slate-200 rounded-xl bg-white" 
     : "border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm";
 
   return (
@@ -35,7 +35,7 @@ export default function Table({  // Add 'default' here
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-emerald-800 text-white uppercase text-[12px] font-semibold">
+            <tr className="bg-[#10b981] text-white uppercase text-[12px] font-semibold">
               {columns.map((col) => {
                 const isSorted = sortKey === col.key;
                 return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Upload, FileText, Trash2, X } from 'lucide-react';
-import StatusBadge from '../common/StatusBadge';
+import StatusBadge from '../ui/StatusBadge';
 
 const DOC_TYPES = ['Aadhaar Card', 'PAN Card', 'Photo', 'ID Card'];
 

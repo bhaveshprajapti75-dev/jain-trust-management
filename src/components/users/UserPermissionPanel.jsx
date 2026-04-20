@@ -1,5 +1,5 @@
 import { ShieldCheck } from 'lucide-react'
-import PermissionChip from '../common/PermissionChip'
+import PermissionChip from '../ui/PermissionChip'
 import { PERM_GROUPS, getCount, hasPerm } from '../../pages/RolesAndPermissions/RoleData'
 
 export default function UserPermissionPanel({ role, extraPerms = [] }) {

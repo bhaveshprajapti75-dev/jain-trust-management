@@ -5,7 +5,7 @@ export default function StatusToggle({ status, onToggle }) {
         type="button"
         onClick={onToggle}
         className={`w-9 h-5 rounded-full relative cursor-pointer transition-colors duration-200 focus:outline-none shadow-inner ${
-          status ? 'bg-emerald-600' : 'bg-slate-300'
+          status ? 'bg-[#10b981]' : 'bg-slate-200'
         }`}
       >
         <div
