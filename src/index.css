@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--brand-green-50: #f2f8f5;
+		--brand-green-100: #e3f0e9;
+		--brand-green-200: #cfe3d9;
+		--brand-green-500: #4f9b7d;
+		--brand-green-600: #3f8468;
+		--brand-green-700: #336d56;
+		--brand-green-800: #2a5a47;
+	}
+
+	html {
+		font-size: 14px;
+	}
+
+	@media (min-width: 1920px) {
+		html {
+			font-size: 16px;
+		}
+	}
+
+	@media (max-width: 1366px) {
+		html {
+			font-size: 13px;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		html {
+			font-size: 12px;
+		}
+	}
+
+	body {
+		margin: 0;
+		font-family: 'Manrope', 'Inter', 'Segoe UI', system-ui, sans-serif;
+		color: #334155;
+		background: #f3f4f6;
+		font-size: 1rem;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+}
+
+/* Project-wide minimal green palette overrides */
+.text-emerald-900 { color: #1f3f33 !important; }
+.text-emerald-800 { color: var(--brand-green-800) !important; }
+.text-emerald-700,
+.text-teal-700,
+.text-teal-600 { color: var(--brand-green-700) !important; }
+.text-emerald-600,
+.text-emerald-500,
+.text-teal-500 { color: var(--brand-green-600) !important; }
+
+.bg-emerald-50,
+.bg-teal-50 { background-color: var(--brand-green-50) !important; }
+.bg-emerald-100 { background-color: var(--brand-green-100) !important; }
+.bg-emerald-200 { background-color: var(--brand-green-200) !important; }
+.bg-emerald-500,
+.bg-teal-500 { background-color: var(--brand-green-500) !important; }
+.bg-emerald-600,
+.bg-teal-600 { background-color: var(--brand-green-600) !important; }
+.bg-emerald-700,
+.bg-teal-700 { background-color: var(--brand-green-700) !important; }
+.bg-emerald-800 { background-color: var(--brand-green-800) !important; }
+
+.border-emerald-50,
+.border-emerald-100,
+.border-emerald-200,
+.border-emerald-300,
+.border-teal-100,
+.border-teal-200 { border-color: var(--brand-green-200) !important; }
+
+.from-emerald-500,
+.from-emerald-600,
+.from-teal-500,
+.from-teal-600 {
+	--tw-gradient-from: var(--brand-green-600) var(--tw-gradient-from-position) !important;
+	--tw-gradient-to: rgb(63 132 104 / 0) var(--tw-gradient-to-position) !important;
+	--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.to-emerald-500,
+.to-emerald-600,
+.to-green-500,
+.to-green-600,
+.to-lime-500 {
+	--tw-gradient-to: #67ad90 var(--tw-gradient-to-position) !important;
+}
