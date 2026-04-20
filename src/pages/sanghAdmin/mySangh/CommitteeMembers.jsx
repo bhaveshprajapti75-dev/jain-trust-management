@@ -267,7 +267,7 @@ export default function CommitteeMembers() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name..."
-            className="w-full h-[34px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] outline-none focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] transition-all font-medium"
+            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
           />
         </div>
         <div className="flex gap-2">
@@ -294,24 +294,29 @@ export default function CommitteeMembers() {
             ]}
             onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
             onClear={() => setFilters({ status: "", role: "" })}
+            className="h-10 rounded-lg border-gray-300"
           />
           <Button
+            variant="emerald"
             icon={Plus}
             onClick={() => setModal({ type: "add", data: null })}
-            className="h-[34px] text-[13px] font-bold shadow-md shadow-teal-50"
+            className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
           >
-            Add Member
+            ADD MEMBER
           </Button>
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        data={paginatedMembers}
-        loading={loading}
-        skipCard
-        emptyMessage="No members found"
-      />
+      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
+        <Table
+          columns={columns}
+          data={paginatedMembers}
+          loading={loading}
+          skipCard
+          variant="emerald"
+          emptyMessage="No members found"
+        />
+      </div>
       <Pagination
         currentPage={currentPage}
         totalRecords={filteredMembers.length}
@@ -329,14 +334,18 @@ export default function CommitteeMembers() {
         title={`${modal.type === "edit" ? "Edit" : "Add"} Member`}
         footer={
           <div className="flex gap-3">
-            <Button
-              variant="secondary"
+            <button
               onClick={() => setModal({ type: null, data: null })}
+              className="px-6 py-2 rounded-xl text-[14px] font-bold text-slate-500 hover:bg-slate-100 transition-all border border-slate-200"
             >
               Cancel
-            </Button>
-            <Button loading={saving} onClick={handleSave}>
-              {modal.type === "edit" ? "Update" : "Add"} Member
+            </button>
+            <Button
+              variant="emerald"
+              onClick={handleSave}
+              className="px-8 py-2 text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+            >
+              {modal.type === "edit" ? "Update" : "Save"} Member
             </Button>
           </div>
         }

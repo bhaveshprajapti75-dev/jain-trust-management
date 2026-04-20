@@ -189,7 +189,7 @@ export default function Upashray() {
     { key: 'id', label: 'SR. NO', align: 'center', render: (_, __, i) => i + 1 },
     { key: 'name', label: 'UPASHRAY NAME', sortable: true, render: (v, r) => (
       <div className="flex flex-col">
-        <span className="font-bold text-teal-600">{v}</span>
+        <span className="font-bold text-emerald-600">{v}</span>
         <span className="text-xs text-slate-400 truncate max-w-[200px]">
           {r.allocationType}
         </span>
@@ -210,7 +210,7 @@ export default function Upashray() {
     )},
     { key: 'actions', label: 'ACTION', align: 'center', render: (_, r) => (
       <div className="flex items-center justify-center gap-2">
-        <button onClick={() => openModal('view', r)} className="w-8 h-8 flex items-center justify-center text-teal-500 bg-teal-50 hover:bg-teal-100 rounded-full transition-all"><Eye size={15} /></button>
+        <button onClick={() => openModal('view', r)} className="w-8 h-8 flex items-center justify-center text-emerald-500 bg-teal-50 hover:bg-emerald-100 rounded-full transition-all"><Eye size={15} /></button>
         <button onClick={() => openModal('edit', r)} className="w-8 h-8 flex items-center justify-center text-sky-500 bg-sky-50 hover:bg-sky-100 rounded-full transition-all border border-sky-100"><Pencil size={15} /></button>
         <button onClick={() => { setItemToDelete(r); setIsDeleteModalOpen(true); }} className="w-8 h-8 flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-full transition-all border border-rose-100"><Trash2 size={15} /></button>
       </div>
@@ -240,9 +240,9 @@ export default function Upashray() {
             type="button"
             onClick={() => setActiveTab(i)}
             className={`px-5 py-2 text-[12px] font-bold rounded-xl transition-all duration-300 ${
-              activeTab === i 
-                ? 'bg-[#10b981] text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20' 
-                : 'text-slate-400 hover:text-slate-600 hover:bg-white'
+              activeTab === i
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
+                : "text-slate-400 hover:text-slate-600 hover:bg-white"
             }`}
           >
             {tab}
@@ -264,21 +264,21 @@ export default function Upashray() {
             Cancel
           </button>
           {activeTab < TABS.length - 1 ? (
-            <button
-              type="button"
-              onClick={() => setActiveTab(t => t + 1)}
-              className="w-36 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] hover:shadow-lg hover:shadow-emerald-100 transition-all active:scale-95"
+            <Button
+              variant="emerald"
+              onClick={() => setActiveTab((t) => t + 1)}
+              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
             >
               Next
-            </button>
+            </Button>
           ) : (
-            <button
-              type="button"
+            <Button
+              variant="emerald"
               onClick={handleSave}
-              className="w-36 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] hover:shadow-lg hover:shadow-emerald-100 transition-all active:scale-95"
+              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
             >
-              {modalMode === 'add' ? 'Submit' : 'Update'}
-            </button>
+              {modalMode === "add" ? "Submit" : "Update"}
+            </Button>
           )}
         </>
       ) : (
@@ -297,24 +297,59 @@ export default function Upashray() {
     <CommonPageLayout title="Upashray Management" stats={stats}>
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
         <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Upashray, City, or Sangh..." className="w-full h-[34px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] outline-none transition-all font-medium" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search Upashray, City, or Sangh..."
+            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+          />
         </div>
         <div className="flex items-center gap-2">
-          <FilterButton 
-            filters={filters} 
+          <FilterButton
+            filters={filters}
             options={[
-              { key: 'status', placeholder: 'Status', items: [{ label: 'Active', value: 'Active' }, { label: 'Inactive', value: 'Inactive' }, { label: 'Under Renovation', value: 'Under Renovation' }] },
-              { key: 'district', placeholder: 'City', items: GUJARAT_DISTRICTS.map(d => ({ label: d, value: d })) }
-            ]} 
-            onChange={(k, v) => { setFilters(p => ({ ...p, [k]: v })); setCurrentPage(1); }} 
-            onClear={() => { setFilters({ status: 'All', district: 'All' }); setCurrentPage(1); }} 
-            dataCount={filteredData.length} 
+              {
+                key: "status",
+                placeholder: "Status",
+                items: [
+                  { label: "Active", value: "Active" },
+                  { label: "Inactive", value: "Inactive" },
+                  { label: "Under Renovation", value: "Under Renovation" },
+                ],
+              },
+              {
+                key: "district",
+                placeholder: "City",
+                items: GUJARAT_DISTRICTS.map((d) => ({ label: d, value: d })),
+              },
+            ]}
+            onChange={(k, v) => {
+              setFilters((p) => ({ ...p, [k]: v }));
+              setCurrentPage(1);
+            }}
+            onClear={() => {
+              setFilters({ status: "All", district: "All" });
+              setCurrentPage(1);
+            }}
+            dataCount={filteredData.length}
+            className="h-10 rounded-lg border-gray-300"
           />
-          <Button icon={Plus} onClick={() => openModal('add')} className="shadow-lg shadow-teal-100 text-[13px] h-[34px] px-4 font-bold">Add Upashray</Button>
+          <Button
+            variant="emerald"
+            icon={Plus}
+            onClick={() => openModal("add")}
+            className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+          >
+            ADD UPASHRAY
+          </Button>
         </div>
       </div>
-      <Table columns={columns} data={paginatedData} loading={loading} skipCard={true} />
+
+      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
+        <Table variant="emerald" columns={columns} data={paginatedData} loading={loading} skipCard={true} />
+      </div>
       <Pagination currentPage={currentPage} totalRecords={filteredData.length} recordsPerPage={recordsPerPage} onPageChange={setCurrentPage} onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} />
 
 
@@ -410,7 +445,7 @@ function Tab1({ formData, set, isView, onImageClick }) {
                 <button 
                   type="button"
                   onClick={() => setShowMenu(!showMenu)}
-                  className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition-all shadow-sm border border-teal-100"
+                  className="w-9 h-9 rounded-xl bg-teal-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-all shadow-sm border border-emerald-100"
                 >
                   <Plus size={18} />
                 </button>
@@ -422,7 +457,7 @@ function Tab1({ formData, set, isView, onImageClick }) {
                       className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50/50 group transition-all"
                       onClick={() => galleryRef.current.click()}
                     >
-                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                         <ImageIcon size={18} />
                       </div>
                       <div className="flex flex-col items-start translate-y-[1px]">
@@ -435,7 +470,7 @@ function Tab1({ formData, set, isView, onImageClick }) {
                       className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50/50 group transition-all"
                       onClick={() => cameraRef.current.click()}
                     >
-                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all">
+                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all">
                         <Camera size={18} />
                       </div>
                       <div className="flex flex-col items-start translate-y-[1px]">
@@ -473,7 +508,7 @@ function Tab1({ formData, set, isView, onImageClick }) {
               {formData.photos?.map((photo, idx) => (
                 <div 
                   key={idx} 
-                  className={`relative group aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${idx === 0 ? 'border-teal-500 ring-2 ring-teal-500/20' : 'border-slate-200'}`}
+                  className={`relative group aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${idx === 0 ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-slate-200'}`}
                 >
                   <img 
                     src={typeof photo === 'string' ? photo : URL.createObjectURL(photo)} 
@@ -540,8 +575,8 @@ function Tab1({ formData, set, isView, onImageClick }) {
               { id: 'woodenPlanks', label: 'Wooden Planks (Paat/Bajoth) Available' },
               { id: 'audioSystem', label: 'Audio/Mic System (for Pravachan)' }
             ].map(item => (
-              <label key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${formData[item.id] ? 'bg-teal-50 border-teal-200' : 'bg-white border-slate-200 hover:border-teal-200'}`}>
-                <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${formData[item.id] ? 'bg-teal-600 text-white' : 'bg-slate-100 text-transparent border border-slate-300'}`}>
+              <label key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer ${formData[item.id] ? 'bg-teal-50 border-emerald-200' : 'bg-white border-slate-200 hover:border-emerald-200'}`}>
+                <div className={`w-5 h-5 rounded flex items-center justify-center transition-colors ${formData[item.id] ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-transparent border border-slate-300'}`}>
                   <Check size={14} strokeWidth={3} />
                 </div>
                 <span className="text-[13px] font-medium text-slate-700">{item.label}</span>

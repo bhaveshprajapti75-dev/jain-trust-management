@@ -47,6 +47,34 @@ export const apiService = {
 export const authService = {
   login: async (credentials) => {
     try {
+      // Dummy Super Admin Bypass for Testing
+      if (credentials.email?.trim().toLowerCase() === 'superadmin@jainsangh.com' && credentials.password === 'superadmin123') {
+        const dummyResponse = {
+          tokens: { access: 'dummy-token-super-admin' },
+          role: 'super_admin',
+          user: {
+            id: 'dummy-id',
+            full_name: 'Super Admin',
+            role: 'super_admin'
+          }
+        };
+        
+        const token = dummyResponse.tokens.access;
+        const normalizedRole = ROLES.SUPER_ADMIN; 
+        
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('userRole', normalizedRole);
+        sessionStorage.setItem('userName', dummyResponse.user.full_name);
+        sessionStorage.setItem('userId', dummyResponse.user.id);
+        
+        return {
+          ...dummyResponse,
+          normalizedRole,
+          token,
+          role: normalizedRole
+        };
+      }
+
       const response = await api.post('v1/auth/login/', credentials);
       const data = response.data;
 

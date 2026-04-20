@@ -46,7 +46,7 @@ export default function SanghAdminDashboard() {
         {/* Header - Only one quick action button */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-[22px] font-bold text-teal-700 tracking-tight">
+            <h1 className="text-[22px] font-bold text-emerald-700 tracking-tight">
               Sangh Admin Portal
             </h1>
             <p className="text-[13px] font-medium text-slate-400 mt-0.5">
@@ -55,11 +55,12 @@ export default function SanghAdminDashboard() {
           </div>
           <div className="flex items-center">
             <Button
-              size="sm"
+              variant="emerald"
               icon={UserPlus}
               onClick={() => navigate("/sangh-admin/members/individuals")}
+              className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
             >
-              Add Member
+              ADD MEMBER
             </Button>
           </div>
         </div>
@@ -106,7 +107,7 @@ export default function SanghAdminDashboard() {
                 <h3 className="text-[15px] font-bold text-slate-800 uppercase tracking-wide">Finance Overview</h3>
                 <p className="text-[11px] text-slate-400 font-medium">Monthly Donation vs Expenses</p>
               </div>
-              <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                 <BarChart3 className="w-5 h-5" />
               </div>
             </div>
@@ -119,7 +120,7 @@ export default function SanghAdminDashboard() {
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#94a3b8', fontWeight: 600 }} tickFormatter={(v) => `₹${v/1000}K`} />
                   <Tooltip contentStyle={tipStyle} cursor={{fill: '#f8fafc'}} />
                   <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{fontSize: '11px', fontWeight: 600, paddingBottom: 20}} />
-                  <Bar dataKey="donation" name="Donation" fill="#0d9488" radius={[4, 4, 0, 0]} barSize={20} />
+                  <Bar dataKey="donation" name="Donation" fill="#059669" radius={[4, 4, 0, 0]} barSize={20} />
                   <Bar dataKey="expense" name="Expense" fill="#e11d48" radius={[4, 4, 0, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>

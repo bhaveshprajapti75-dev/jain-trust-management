@@ -16,6 +16,7 @@ export default function Table({  // Add 'default' here
   emptyAction,
   rowKey = 'id',
   skipCard = false,
+  variant = 'primary', // Default to existing style
 }) {
   if (loading) return (
     <div className="p-4 bg-white rounded-xl border border-slate-100">
@@ -27,15 +28,17 @@ export default function Table({  // Add 'default' here
   }
 
   const tableWrapperClass = skipCard 
-    ? "overflow-hidden border border-slate-200 rounded-xl bg-white" 
+    ? `overflow-hidden bg-white ${variant === 'emerald' ? 'rounded-none border-none' : 'border border-slate-200 rounded-xl'}` 
     : "border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-sm";
+
+  const headerBgClass = variant === 'emerald' ? 'bg-emerald-800' : 'bg-[#10b981]';
 
   return (
     <div className={tableWrapperClass}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-[#10b981] text-white uppercase text-[12px] font-semibold">
+            <tr className={`${headerBgClass} text-white uppercase text-[12px] font-semibold`}>
               {columns.map((col) => {
                 const isSorted = sortKey === col.key;
                 return (
@@ -53,12 +56,12 @@ export default function Table({  // Add 'default' here
               })}
              </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-gray-200">
             {data.map((row, i) => (
               <tr 
                 key={row?.[rowKey] || i} 
                 onClick={() => { if (onRowClick) onRowClick(row); }}
-                className={`hover:bg-emerald-50 transition-colors group ${onRowClick ? 'cursor-pointer' : ''}`}
+                className={`transition-colors group ${onRowClick ? 'cursor-pointer hover:bg-emerald-50' : ''}`}
               >
                 {columns.map((col) => (
                   <td key={col.key} className={`px-5 py-4 ${col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'}`}>

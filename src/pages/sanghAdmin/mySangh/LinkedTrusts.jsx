@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Landmark, Eye, Trash2, CheckCircle2, Search } from "lucide-react";
 import CommonPageLayout from "../../../components/ui/CommonPageLayout";
 import Table from "../../../components/ui/Table";
+import Button from "../../../components/ui/Button";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import FilterButton from "../../../components/ui/FilterButton";
 import Modal from "../../../components/ui/Modal";
@@ -112,7 +113,7 @@ export default function LinkedTrusts() {
     {
       key: "name",
       label: "Trust Name",
-      render: (name) => <span className="font-bold text-teal-700">{name}</span>,
+      render: (name) => <span className="font-bold text-emerald-700">{name}</span>,
     },
     { key: "category", label: "Category" },
     { key: "phone", label: "Phone" },
@@ -141,7 +142,7 @@ export default function LinkedTrusts() {
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <button
-            className="p-1.5 rounded-xl bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white transition-all shadow-sm"
+            className="p-1.5 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
             title="View Details"
             onClick={() => setViewModal({ open: true, data: row })}
           >
@@ -190,13 +191,13 @@ export default function LinkedTrusts() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <div className="w-full sm:max-w-sm">
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by trust name..."
-              className="w-full h-[34px] pl-11 pr-10 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-[#10b981] focus:ring-2 focus:ring-teal-50 outline-none transition-all duration-200"
+              className="w-full h-10 pl-11 pr-10 rounded-lg border border-gray-300 bg-white text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-50 outline-none transition-all duration-200 shadow-sm"
             />
           </div>
         </div>
@@ -207,18 +208,22 @@ export default function LinkedTrusts() {
             options={filterOptions}
             onChange={handleFilterChange}
             onClear={clearFilters}
+            className="h-10 rounded-lg border-gray-300"
           />
         </div>
       </div>
 
-      <Table
-        columns={columns}
-        data={paginatedTrusts}
-        loading={loading}
-        skipCard
-        emptyMessage="No linked trusts found"
-        emptyDescription="Try adjusting your search or add new trusts."
-      />
+      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
+        <Table
+          variant="emerald"
+          columns={columns}
+          data={paginatedTrusts}
+          loading={loading}
+          skipCard
+          emptyMessage="No linked trusts found"
+          emptyDescription="Try adjusting your search or add new trusts."
+        />
+      </div>
 
       <Pagination
         currentPage={currentPage}
@@ -287,12 +292,13 @@ export default function LinkedTrusts() {
             </div>
 
             <div className="pt-2 flex justify-end">
-              <button
+              <Button
+                variant="emerald"
                 onClick={() => setViewModal({ open: false, data: null })}
-                className="px-6 py-2.5 bg-teal-600 text-white text-sm font-bold rounded-xl hover:bg-teal-700 transition-colors shadow-md shadow-teal-100"
+                className="px-8 h-10 shadow-lg shadow-emerald-900/10 font-bold"
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         )}

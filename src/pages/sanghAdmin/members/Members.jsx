@@ -522,7 +522,7 @@ export default function Members() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={`Search members...`}
-            className="w-full h-[34px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] outline-none focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] transition-all font-medium"
+            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
           />
         </div>
         <div className="flex gap-2">
@@ -574,17 +574,20 @@ export default function Members() {
               setFilters({ status: "", family_category: "", is_volunteer: "", role: "" });
               setCurrentPage(1);
             }}
+            className="h-10 rounded-lg border-gray-300"
           />
           {activeTab === "Family" && (
-            <Button icon={Plus} onClick={() => openModal("addCategory")} className="h-[34px] text-[13px] font-bold shadow-md shadow-teal-50">Family Category</Button>
+            <Button variant="emerald" icon={Plus} onClick={() => openModal("addCategory")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">FAMILY CATEGORY</Button>
           )}
           {activeTab === "Member" && (
-            <Button icon={Plus} onClick={() => openModal("add")} className="h-[34px] text-[13px] font-bold shadow-md shadow-teal-50">Add Member</Button>
+            <Button variant="emerald" icon={Plus} onClick={() => openModal("add")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">ADD MEMBER</Button>
           )}
         </div>
       </div>
 
-      <Table columns={activeTab === "Family" ? familyColumns : columns} data={activeTab === "Family" ? familyCategories : paginatedData} loading={activeTab === "Family" ? false : loading} skipCard />
+      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
+        <Table variant="emerald" columns={activeTab === "Family" ? familyColumns : columns} data={activeTab === "Family" ? familyCategories : paginatedData} loading={activeTab === "Family" ? false : loading} skipCard />
+      </div>
       <Pagination currentPage={currentPage} totalRecords={activeTab === "Family" ? familyCategories.length : filteredData.length} recordsPerPage={recordsPerPage} onPageChange={setCurrentPage} onRecordsPerPageChange={setRecordsPerPage} />
 
       {/* ═══ Add/Edit/View Category Modal ═══ */}
@@ -602,18 +605,22 @@ export default function Members() {
             disabled={modal.type === "viewCategory"}
           />
           {modal.type !== "viewCategory" ? (
-            <Button className="w-full" onClick={() => {
-              if (modal.type === "addCategory") handleAddCategory();
-              else {
-                setFamilyCategories(prev => prev.map(c => c.id === modal.data.id ? { ...c, category: formData.category } : c));
-                setModal({ type: null, data: null });
-                showToast("Category updated successfully!", "success");
-              }
-            }}>
+            <Button 
+              variant="emerald"
+              className="w-full text-[14px] font-bold shadow-lg shadow-emerald-900/10" 
+              onClick={() => {
+                if (modal.type === "addCategory") handleAddCategory();
+                else {
+                  setFamilyCategories(prev => prev.map(c => c.id === modal.data.id ? { ...c, category: formData.category } : c));
+                  setModal({ type: null, data: null });
+                  showToast("Category updated successfully!", "success");
+                }
+              }}
+            >
               {modal.type === "editCategory" ? "Save Changes" : "Add Category"}
             </Button>
           ) : (
-            <Button className="w-full bg-slate-100 text-slate-600 border-slate-200" onClick={() => setModal({ type: null, data: null })}>Close</Button>
+            <Button variant="secondary" className="w-full font-bold" onClick={() => setModal({ type: null, data: null })}>Close</Button>
           )}
         </div>
       </Modal>
@@ -646,9 +653,9 @@ export default function Members() {
                   type="button"
                   onClick={() => setActiveModalTab(i)}
                   className={`px-5 py-2 text-[12px] font-bold rounded-xl transition-all duration-300 ${
-                    activeModalTab === i 
-                      ? 'bg-[#10b981] text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20' 
-                      : 'text-slate-400 hover:text-slate-600 hover:bg-white'
+                    activeModalTab === i
+                      ? "bg-emerald-600 text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
+                      : "text-slate-400 hover:text-slate-600 hover:bg-white"
                   }`}
                 >
                   {tab}
@@ -669,22 +676,22 @@ export default function Members() {
              {modal.type !== "view" && (
                <>
                  {activeModalTab < MEMBER_TABS.length - 1 ? (
-                    <button
-                      type="button"
+                    <Button
+                      variant="emerald"
+                      className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
                       onClick={() => setActiveModalTab(t => t + 1)}
-                      className="w-36 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] transition-all shadow-lg shadow-emerald-100"
                     >
                       Next Step
-                    </button>
+                    </Button>
                  ) : (
-                    <button
-                      type="button"
+                    <Button
+                      variant="emerald"
                       onClick={handleSave}
                       disabled={saving}
-                      className="w-40 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] disabled:opacity-50 transition-all shadow-lg shadow-emerald-100 flex items-center justify-center gap-2"
+                      className="w-40 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
                     >
                       {saving ? "Saving..." : (modal.type === "add" ? "Submit" : "Update")}
-                    </button>
+                    </Button>
                  )}
                </>
              )}

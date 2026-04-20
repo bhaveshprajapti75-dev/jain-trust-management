@@ -53,6 +53,7 @@ import Derasar from '../pages/sanghAdmin/institutions/Derasar'
 import Pathshala from '../pages/sanghAdmin/institutions/Pathshala'
 import AyambliShala from '../pages/sanghAdmin/institutions/AyambliShala'
 import Upashray from '../pages/sanghAdmin/institutions/Upashray'
+import Events from '../pages/sanghAdmin/activities/Events'
 
 import { ROLES } from '../config/roles'
 import { ProtectedRoute, RoleGuard } from '../components/auth/Guards'
@@ -129,7 +130,7 @@ export default function AppRoutes() {
             <Route path="finance/expenses" element={<Expense />} />
             <Route path="finance/reports" element={<Analytics />} />
             
-            <Route path="activities/events" element={<SanghAdminDashboard />} /> {/* Placeholder */}
+            <Route path="activities/events" element={<Events />} /> {/* Placeholder */}
             <Route path="activities/meetings" element={<SanghAdminDashboard />} /> {/* Placeholder */}
           </Route>
         </Route>

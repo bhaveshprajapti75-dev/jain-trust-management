@@ -234,9 +234,9 @@ export default function Pathshala() {
             type="button"
             onClick={() => setActiveTab(i)}
             className={`px-5 py-2 text-[12px] font-bold rounded-xl transition-all duration-300 ${
-              activeTab === i 
-                ? 'bg-[#10b981] text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20' 
-                : 'text-slate-400 hover:text-slate-600 hover:bg-white'
+              activeTab === i
+                ? "bg-emerald-600 text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
+                : "text-slate-400 hover:text-slate-600 hover:bg-white"
             }`}
           >
             {tab}
@@ -258,21 +258,21 @@ export default function Pathshala() {
             Cancel
           </button>
           {activeTab < TABS.length - 1 ? (
-            <button
-              type="button"
-              onClick={() => setActiveTab(t => t + 1)}
-              className="w-36 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] hover:shadow-lg hover:shadow-emerald-100 transition-all active:scale-95"
+            <Button
+              variant="emerald"
+              onClick={() => setActiveTab((t) => t + 1)}
+              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
             >
               Next
-            </button>
+            </Button>
           ) : (
-            <button
-              type="button"
+            <Button
+              variant="emerald"
               onClick={handleSave}
-              className="w-36 h-[42px] rounded-xl bg-[#10b981] text-white font-bold text-[14px] hover:bg-[#059669] hover:shadow-lg hover:shadow-emerald-100 transition-all active:scale-95"
+              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
             >
-              {modalMode === 'add' ? 'Submit' : 'Update'}
-            </button>
+              {modalMode === "add" ? "Submit" : "Update"}
+            </Button>
           )}
         </>
       ) : (
@@ -291,24 +291,58 @@ export default function Pathshala() {
     <CommonPageLayout title="Institute Management" stats={stats}>
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
         <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search Institute, City, or Sangh..." className="w-full h-[34px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] outline-none transition-all font-medium" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search Institute, City, or Sangh..."
+            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+          />
         </div>
         <div className="flex items-center gap-2">
-          <FilterButton 
-            filters={filters} 
+          <FilterButton
+            filters={filters}
             options={[
-              { key: 'status', placeholder: 'Status', items: [{ label: 'Active', value: 'Active' }, { label: 'Inactive', value: 'Inactive' }] },
-              { key: 'district', placeholder: 'City', items: GUJARAT_DISTRICTS.map(d => ({ label: d, value: d })) }
-            ]} 
-            onChange={(k, v) => { setFilters(p => ({ ...p, [k]: v })); setCurrentPage(1); }} 
-            onClear={() => { setFilters({ status: 'All', district: 'All' }); setCurrentPage(1); }} 
-            dataCount={filteredData.length} 
+              {
+                key: "status",
+                placeholder: "Status",
+                items: [
+                  { label: "Active", value: "Active" },
+                  { label: "Inactive", value: "Inactive" },
+                ],
+              },
+              {
+                key: "district",
+                placeholder: "City",
+                items: GUJARAT_DISTRICTS.map((d) => ({ label: d, value: d })),
+              },
+            ]}
+            onChange={(k, v) => {
+              setFilters((p) => ({ ...p, [k]: v }));
+              setCurrentPage(1);
+            }}
+            onClear={() => {
+              setFilters({ status: "All", district: "All" });
+              setCurrentPage(1);
+            }}
+            dataCount={filteredData.length}
+            className="h-10 rounded-lg border-gray-300"
           />
-          <Button icon={Plus} onClick={() => openModal('add')} className="shadow-lg shadow-teal-100 text-[13px] h-[34px] px-4 font-bold">Add Institute</Button>
+          <Button
+            variant="emerald"
+            icon={Plus}
+            onClick={() => openModal("add")}
+            className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+          >
+            ADD INSTITUTE
+          </Button>
         </div>
       </div>
-      <Table columns={columns} data={paginatedData} loading={loading} skipCard={true} />
+
+      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
+        <Table variant="emerald" columns={columns} data={paginatedData} loading={loading} skipCard={true} />
+      </div>
       <Pagination currentPage={currentPage} totalRecords={filteredData.length} recordsPerPage={recordsPerPage} onPageChange={setCurrentPage} onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} />
 
 

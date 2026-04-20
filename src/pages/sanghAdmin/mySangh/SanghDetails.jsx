@@ -98,7 +98,7 @@ export default function SanghDetails() {
           {/* Main Header Profile */}
           <div className="px-4 pt-4 pb-3 border-b border-slate-50 relative">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-teal-50 border-[3px] border-white shadow-lg flex items-center justify-center text-teal-600 shrink-0">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-50 border-[3px] border-white shadow-lg flex items-center justify-center text-emerald-600 shrink-0">
                 <Building2 className="w-8 h-8" />
               </div>
 
@@ -108,7 +108,7 @@ export default function SanghDetails() {
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight">
                       {loading ? "Loading..." : (sangh.name || "Sangh Details")}
                     </h1>
-                    <p className="text-[13px] font-bold text-teal-600 uppercase tracking-[0.15em]">
+                    <p className="text-[13px] font-bold text-emerald-600 uppercase tracking-[0.15em]">
                       {loading ? "Fetching information..." : (sangh.type || "Organization Profile")}
                     </p>
                   </div>
@@ -124,8 +124,8 @@ export default function SanghDetails() {
                 label="Established Year"
                 value={loading ? "..." : (sangh.date || sangh.established_year)}
                 icon={Calendar}
-                color="text-teal-600"
-                bg="bg-teal-50/40"
+                color="text-emerald-600"
+                bg="bg-emerald-50/40"
               />
               <StatSmall
                 label="Location"
@@ -191,7 +191,7 @@ export default function SanghDetails() {
 function StatSmall({ label, value, icon: Icon, color, bg }) {
   return (
     <div
-      className={`p-4 rounded-2xl border border-slate-100 flex items-center justify-between group hover:border-teal-100 hover:shadow-sm transition-all duration-300 ${bg}`}
+      className={`p-4 rounded-2xl border border-slate-100 flex items-center justify-between group hover:border-emerald-100 hover:shadow-sm transition-all duration-300 ${bg}`}
     >
       <div className="space-y-0.5">
         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -221,7 +221,7 @@ function DetailBox({ label, value, icon: Icon, valueClass }) {
       </div>
       <p
         className={`text-[14px] font-bold pl-5.5 leading-relaxed transition-colors ${
-          valueClass || "text-slate-700 group-hover:text-teal-600"
+          valueClass || "text-slate-700 group-hover:text-emerald-600"
         }`}
       >
         {value || "-"}

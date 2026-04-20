@@ -142,7 +142,7 @@ const Login = () => {
               <button className="text-teal-600 font-bold hover:underline decoration-2 underline-offset-4">
                 Contact Administrator
               </button>
-            </p>
+                </p>
           </div> */}
         </div>
 
