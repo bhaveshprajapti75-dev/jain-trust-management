@@ -237,7 +237,9 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
 
       {showLabels && (
         <div className="px-4 py-3 border-t border-slate-200 shrink-0">
-          <p className="text-[11px] text-slate-800 font-bold tracking-wide">SUPER ADMIN PANEL</p>
+          <p className="text-[11px] text-slate-800 font-bold tracking-wide">
+            {isSanghAdmin ? 'SANGH ADMIN PANEL' : 'SUPER ADMIN PANEL'}
+          </p>
           <p className="text-[11px] text-slate-500 mt-0.5">Jain Sangh Management</p>
         </div>
       )}

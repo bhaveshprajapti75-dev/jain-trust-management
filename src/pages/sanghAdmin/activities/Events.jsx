@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  CalendarDays, Plus, Eye, Pencil, Trash2, MapPin, Users,
-  Search, Phone, Mail, Clock, Building2, ChevronRight, Image as ImageIcon,
-  ArrowLeft, X, Check, Camera, ExternalLink, Ticket, Info, Globe, Shield, Truck, 
+  CalendarDays, Plus, MapPin, Users,
+  Search, Phone, Mail, Clock, Building2, Image as ImageIcon,
+  ArrowLeft, X, Check, ExternalLink, Ticket, Info, Globe, Shield, Truck,
   Stethoscope, Briefcase
 } from 'lucide-react';
 import CommonPageLayout from '../../../components/ui/CommonPageLayout';
 import Button from '../../../components/ui/Button';
 import Table from '../../../components/ui/Table';
-import StatusToggle from '../../../components/ui/StatusToggle';
 import { useToast } from '../../../components/ui/Toast';
 import Modal from '../../../components/ui/Modal';
 import ConfirmModal from '../../../components/ui/ConfirmModal';
@@ -18,7 +17,9 @@ import Input from '../../../components/ui/Input';
 import Pagination from '../../../components/ui/Pagination';
 import CustomDropdown from '../../../components/ui/CustomDropdown';
 import TimePicker from '../../../components/ui/TimePicker';
+import DatePicker from '../../../components/ui/DatePicker';
 import ActionButtons from '../../../components/ui/ActionButtons';
+import ImageGalleryUpload from '../../../components/ui/ImageGalleryUpload';
 
 // ── Tab config ──────────────────────────────────────────────────────────────
 const TABS = ['Event Details', 'Location & Venue', 'Organizer & Contact', 'Additional Info & Media'];
@@ -46,7 +47,6 @@ const GUJARAT_DISTRICTS = ['Ahmedabad','Surat','Vadodara','Rajkot','Bhavnagar','
 const emptyCategoryForm = {
   categoryName: '',
   description: '',
-  isPublished: true
 };
 
 // ── Empty form ───────────────────────────────────────────────────────────────
@@ -68,7 +68,6 @@ const emptyForm = {
   eventStatus: 'Upcoming',
   eventImage: null,
   createdBy: 'Sangh Admin',
-  isPublished: false,
   
   // Tab 2
   venueAddress: '',
@@ -122,7 +121,7 @@ export default function Events() {
   const [activeSubmodule, setActiveSubmodule] = useState('category'); // 'event' or 'category'
   const [categories, setCategories] = useState([]);
   const [categorySearch, setCategorySearch] = useState('');
-  const [categoryFilters, setCategoryFilters] = useState({ isPublished: 'All' });
+  const [categoryFilters, setCategoryFilters] = useState({});
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categoryFormData, setCategoryFormData] = useState(emptyCategoryForm);
 
@@ -183,14 +182,11 @@ export default function Events() {
   const filteredCategories = useMemo(() => {
     return categories.filter(item => {
       const q = categorySearch.toLowerCase();
-      const matchesSearch = !categorySearch || 
-                           item.categoryName?.toLowerCase().includes(q) || 
-                           item.description?.toLowerCase().includes(q);
-      const matchesStatus = categoryFilters.isPublished === 'All' || 
-                           (categoryFilters.isPublished === 'Active' ? item.isPublished : !item.isPublished);
-      return matchesSearch && matchesStatus;
+      return !categorySearch || 
+             item.categoryName?.toLowerCase().includes(q) || 
+             item.description?.toLowerCase().includes(q);
     });
-  }, [categories, categorySearch, categoryFilters]);
+  }, [categories, categorySearch]);
 
   const paginatedCategories = useMemo(() => {
     const start = (currentPage - 1) * recordsPerPage;
@@ -214,17 +210,6 @@ export default function Events() {
 
   const set = (key, val) => setFormData(prev => ({ ...prev, [key]: val }));
 
-  const togglePublished = async (item) => {
-    try {
-      const newPublished = !item.isPublished;
-      await eventService.updateEvent(item.id, { ...item, isPublished: newPublished });
-      fetchData();
-      showToast(`Event ${newPublished ? 'Published' : 'Unpublished'}`);
-    } catch (error) {
-      console.error('Error updating published status:', error);
-      showToast('Failed to update status', 'error');
-    }
-  };
 
   const handleSave = async () => {
     try {
@@ -260,16 +245,6 @@ export default function Events() {
     }
   };
 
-  const toggleCategoryPublished = async (item) => {
-    try {
-      const newStatus = !item.isPublished;
-      await eventService.updateCategory(item.id, { ...item, isPublished: newStatus });
-      fetchCategories();
-      showToast(`Category ${newStatus ? 'Activated' : 'Deactivated'}`);
-    } catch (error) {
-      showToast('Failed to update status', 'error');
-    }
-  };
 
   const handleCategorySave = async () => {
     try {
@@ -303,22 +278,26 @@ export default function Events() {
       <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider">{v}</span>
     )},
     { key: 'location', label: 'Location', align: 'center', render: (_, r) => (
-      <div className="flex flex-col items-center">
-        <span className="text-slate-600 font-medium text-[12px]">{r.city || '—'}</span>
-        <span className="text-[10px] text-slate-400">{r.district || ''}</span>
-      </div>
+      <span className="text-slate-600 font-medium text-[12px]">{r.city || '—'}</span>
     )},
     { key: 'organizerName', label: 'Organizer', align: 'center', render: v => <span className="text-slate-600 font-medium text-[12px]">{v || '—'}</span> },
     { key: 'eventStatus', label: 'Status', align: 'center', render: v => {
         const s = EVENT_STATUSES.find(st => st.value === v) || { label: v, color: 'slate' };
-        let colorClasses = "bg-slate-100 text-slate-600";
-        if (s.color === 'sky') colorClasses = "bg-sky-100 text-sky-600";
-        if (s.color === 'teal') colorClasses = "bg-teal-100 text-teal-600";
-        if (s.color === 'rose') colorClasses = "bg-rose-100 text-rose-600";
-        if (s.color === 'emerald') colorClasses = "bg-emerald-100 text-emerald-600";
-        return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${colorClasses}`}>{s.label}</span>;
-    }},
-    { key: 'isPublished', label: 'Published', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => togglePublished(r)} /> },
+        const colors = {
+          'Upcoming': 'bg-sky-100 text-sky-700 border-sky-200',
+          'Ongoing': 'bg-teal-100 text-teal-700 border-teal-200',
+          'Completed': 'bg-emerald-100 text-emerald-700 border-emerald-200',
+          'Cancelled': 'bg-rose-100 text-rose-700 border-rose-200'
+        };
+        const colorClass = colors[v] || 'bg-slate-100 text-slate-700 border-slate-200';
+        return (
+          <div className="flex justify-center">
+            <span className={`w-24 py-1 text-[11px] font-bold rounded-md border text-center inline-block ${colorClass}`}>
+              {s.label}
+            </span>
+          </div>
+        );
+      }},
     { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
       <ActionButtons
         onView={row => openModal('view', row)}
@@ -333,7 +312,6 @@ export default function Events() {
     { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => i + 1 },
     { key: 'categoryName', label: 'Category Name', align: 'center', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
     { key: 'description', label: 'Description', align: 'center', render: (v) => <span className="text-slate-500 text-[12px]">{v || '—'}</span> },
-    { key: 'isPublished', label: 'Status', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => toggleCategoryPublished(r)} /> },
     { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
       <ActionButtons
         onView={row => openCategoryModal('view', row)}
@@ -493,23 +471,6 @@ export default function Events() {
               </>
             ) : (
               <>
-                <FilterButton
-                  filters={categoryFilters}
-                  options={[
-                    {
-                      key: "isPublished",
-                      placeholder: "Status",
-                      items: [
-                        { label: "Active", value: "Active" },
-                        { label: "Inactive", value: "Inactive" },
-                      ],
-                    },
-                  ]}
-                  onChange={(k, v) => setCategoryFilters((p) => ({ ...p, [k]: v }))}
-                  onClear={() => setCategoryFilters({ isPublished: "All" })}
-                  dataCount={filteredCategories.length}
-                  className="h-10 rounded-lg border-gray-300"
-                />
                 <Button
                   variant="emerald"
                   icon={Plus}
@@ -611,19 +572,6 @@ export default function Events() {
               placeholder="Provide category details..." 
             />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-bold text-slate-700">Publication Status</label>
-            <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-              <StatusToggle 
-                status={categoryFormData.isPublished} 
-                disabled={modalMode === 'view'}
-                onToggle={() => {
-                  setCategoryFormData(p => ({ ...p, isPublished: !p.isPublished }));
-                }} 
-              />
-              <span className={`text-[12px] font-bold ${categoryFormData.isPublished ? 'text-emerald-600' : 'text-slate-400'}`}>{categoryFormData.isPublished ? 'Active' : 'Inactive'}</span>
-            </div>
-          </div>
         </div>
       </Modal>
 
@@ -651,64 +599,24 @@ export default function Events() {
 // TAB 1: Event Details
 // ─────────────────────────────────────────────────────────────────────────────
 function Tab1({ formData, set, isView, onImageClick, categories }) {
-  const fileRef = useRef(null);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) set('eventImage', file);
-    if (fileRef.current) fileRef.current.value = '';
-  };
+  // Banner managed as a single-item array for ImageGalleryUpload
+  const bannerImages = formData.eventImage ? [formData.eventImage] : [];
 
   return (
     <div className="flex flex-col lg:flex-row gap-10">
       <div className="flex-shrink-0">
         <div className="w-[340px] space-y-4">
-          <label className="text-[13px] font-bold text-slate-700 block px-1">Event Banner Image</label>
-          <div 
-            className={`relative aspect-video rounded-2xl overflow-hidden border-2 border-dashed transition-all cursor-pointer group
-              ${formData.eventImage ? 'border-teal-500 bg-teal-50/20' : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100/50 hover:border-teal-300'}`}
-            onClick={() => !isView && fileRef.current.click()}
-          >
-            {formData.eventImage ? (
-              <img 
-                src={typeof formData.eventImage === 'string' ? formData.eventImage : URL.createObjectURL(formData.eventImage)} 
-                alt="Banner" 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-              />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-2">
-                <ImageIcon size={40} strokeWidth={1.5} />
-                <span className="text-[12px] font-medium">Click to upload banner</span>
-              </div>
-            )}
-            {!isView && (
-              <div className="absolute inset-x-0 bottom-0 bg-slate-900/40 backdrop-blur-sm p-2 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <span className="text-[10px] text-white font-bold flex items-center gap-1.5"><Camera size={12} /> CHANGE PHOTO</span>
-              </div>
-            )}
-            <input type="file" ref={fileRef} accept="image/*" className="hidden" onChange={handleImageChange} />
-          </div>
-          {!isView && (
-            <p className="text-[10px] text-slate-400 font-medium text-center italic">* Recommended size: 1200x675px. Max 2MB.</p>
-          )}
-          
-          <div className="pt-4 space-y-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[13px] font-bold text-slate-700">Publication Status</label>
-              <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                <StatusToggle 
-                  status={formData.isPublished} 
-                  disabled={isView}
-                  onToggle={() => {
-                    set('isPublished', !formData.isPublished);
-                  }} 
-                />
-                <span className={`text-[12px] font-bold ${formData.isPublished ? 'text-emerald-600' : 'text-slate-400'}`}>
-                  {formData.isPublished ? 'Live & Published' : 'Draft / Private'}
-                </span>
-              </div>
-            </div>
-          </div>
+          <ImageGalleryUpload
+            images={bannerImages}
+            onAdd={(files) => set('eventImage', files[0])}
+            onRemove={() => set('eventImage', null)}
+            onImageClick={onImageClick}
+            maxImages={1}
+            disabled={isView}
+            title="Event Banner Image"
+          />
+
+
         </div>
       </div>
 
@@ -719,7 +627,7 @@ function Tab1({ formData, set, isView, onImageClick, categories }) {
           <CustomDropdown 
             value={formData.eventType} 
             onChange={v => set('eventType', v)} 
-            items={categories.filter(c => c.isPublished).map(c => c.categoryName)} 
+            items={categories.map(c => c.categoryName)} 
             placeholder="Select Category" 
             disabled={isView} 
           />
@@ -728,8 +636,8 @@ function Tab1({ formData, set, isView, onImageClick, categories }) {
             <label className="text-[13px] font-medium text-slate-600 block mb-1.5">Description</label>
             <textarea value={formData.description} onChange={e => set('description', e.target.value)} disabled={isView} rows={3} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] outline-none transition-all font-medium bg-white disabled:bg-slate-50/50 resize-none" placeholder="Provide event details..." />
         </div>
-        <Input label="Start Date" type="date" value={formData.startDate} onChange={e => set('startDate', e.target.value)} required disabled={isView} />
-        <Input label="End Date" type="date" value={formData.endDate} onChange={e => set('endDate', e.target.value)} required disabled={isView} />
+        <DatePicker label="Start Date" value={formData.startDate} onChange={e => set('startDate', e.target.value)} required disabled={isView} />
+        <DatePicker label="End Date" value={formData.endDate} onChange={e => set('endDate', e.target.value)} required disabled={isView} />
         
         <div>
           <label className="text-[13px] font-medium text-slate-600 block mb-1.5">Start Time</label>
@@ -857,15 +765,7 @@ function Tab3({ formData, set, isView }) {
 // TAB 4: Additional Info & Media
 // ─────────────────────────────────────────────────────────────────────────────
 function Tab4({ formData, set, isView }) {
-  const galleryRef = useRef(null);
   const brochureRef = useRef(null);
-
-  const handleGalleryChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      set('galleryPhotos', [...(formData.galleryPhotos || []), ...files]);
-    }
-  };
 
   const handleBrochureChange = (e) => {
     const file = e.target.files[0];
@@ -877,76 +777,63 @@ function Tab4({ formData, set, isView }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
         <Input label="Parking Arrangements" placeholder="Details about parking" value={formData.parkingArrangement} onChange={e => set('parkingArrangement', e.target.value)} disabled={isView} icon={Truck} />
         <Input label="Food / Prasad" placeholder="Catering details" value={formData.foodPrasad} onChange={e => set('foodPrasad', e.target.value)} disabled={isView} icon={Info} />
-        
+
         <Input label="Accommodation" placeholder="Guest stay details" value={formData.accommodation} onChange={e => set('accommodation', e.target.value)} disabled={isView} icon={Building2} />
         <Input label="Transportation" placeholder="Shuttle/Bus services" value={formData.transportation} onChange={e => set('transportation', e.target.value)} disabled={isView} icon={Truck} />
-        
+
         <Input label="Medical Facilities" placeholder="First aid, medical booth" value={formData.medicalFacilities} onChange={e => set('medicalFacilities', e.target.value)} disabled={isView} icon={Stethoscope} />
         <Input label="Security Arrangements" placeholder="Guards, CCTV" value={formData.security} onChange={e => set('security', e.target.value)} disabled={isView} icon={Shield} />
-        
+
         <div className="md:col-span-2">
-            <label className="text-[13px] font-medium text-slate-600 block mb-1.5">Special Announcements</label>
-            <textarea value={formData.announcements} onChange={e => set('announcements', e.target.value)} disabled={isView} rows={2} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] outline-none transition-all font-medium bg-white disabled:bg-slate-50/50 resize-none" placeholder="Important notes for participants..." />
+          <label className="text-[13px] font-medium text-slate-600 block mb-1.5">Special Announcements</label>
+          <textarea value={formData.announcements} onChange={e => set('announcements', e.target.value)} disabled={isView} rows={2} className="w-full px-4 py-3 rounded-xl border border-slate-200 text-[13px] focus:ring-2 focus:ring-teal-50 focus:border-[#10b981] outline-none transition-all font-medium bg-white disabled:bg-slate-50/50 resize-none" placeholder="Important notes for participants..." />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-4 border-t border-slate-100">
+        {/* Brochure Upload */}
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h4 className="text-slate-800 font-bold text-[14px]">Event Brochure (PDF)</h4>
-                {!isView && (
-                    <button type="button" onClick={() => brochureRef.current.click()} className="text-[11px] font-bold text-teal-600 hover:text-teal-700 px-3 py-1 bg-teal-50 rounded-lg">Upload Brochure</button>
-                )}
-                <input type="file" ref={brochureRef} accept=".pdf" className="hidden" onChange={handleBrochureChange} />
-            </div>
-            {formData.eventBrochure ? (
-                <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600"><Briefcase size={20} /></div>
-                        <div className="flex flex-col">
-                            <span className="text-[12px] font-bold text-slate-700 truncate max-w-[200px]">{formData.eventBrochure.name || 'Event_Brochure.pdf'}</span>
-                            <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">PDF document</span>
-                        </div>
-                    </div>
-                    {!isView && <button type="button" onClick={() => set('eventBrochure', null)} className="text-rose-500 hover:text-rose-600"><X size={16} /></button>}
-                </div>
-            ) : (
-                <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-300">
-                    <Briefcase size={32} strokeWidth={1} />
-                    <span className="text-[11px] font-medium mt-2">No brochure uploaded</span>
-                </div>
+          <div className="flex items-center justify-between">
+            <h4 className="text-slate-800 font-bold text-[14px]">Event Brochure (PDF)</h4>
+            {!isView && (
+              <button type="button" onClick={() => brochureRef.current.click()} className="text-[11px] font-bold text-teal-600 hover:text-teal-700 px-3 py-1 bg-teal-50 rounded-lg">Upload Brochure</button>
             )}
+            <input type="file" ref={brochureRef} accept=".pdf" className="hidden" onChange={handleBrochureChange} />
+          </div>
+          {formData.eventBrochure ? (
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 group">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-100 flex items-center justify-center text-teal-600"><Briefcase size={20} /></div>
+                <div className="flex flex-col">
+                  <span className="text-[12px] font-bold text-slate-700 truncate max-w-[200px]">{formData.eventBrochure.name || 'Event_Brochure.pdf'}</span>
+                  <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">PDF document</span>
+                </div>
+              </div>
+              {!isView && <button type="button" onClick={() => set('eventBrochure', null)} className="text-rose-500 hover:text-rose-600"><X size={16} /></button>}
+            </div>
+          ) : (
+            <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-300">
+              <Briefcase size={32} strokeWidth={1} />
+              <span className="text-[11px] font-medium mt-2">No brochure uploaded</span>
+            </div>
+          )}
         </div>
 
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h4 className="text-slate-800 font-bold text-[14px]">Gallery Photos</h4>
-                {!isView && (
-                    <button type="button" onClick={() => galleryRef.current.click()} className="text-[11px] font-bold text-teal-600 hover:text-teal-700 px-3 py-1 bg-teal-50 rounded-lg">Add Photos</button>
-                )}
-                <input type="file" ref={galleryRef} multiple accept="image/*" className="hidden" onChange={handleGalleryChange} />
-            </div>
-            {(formData.galleryPhotos?.length > 0) ? (
-                <div className="grid grid-cols-4 gap-2">
-                    {formData.galleryPhotos.map((photo, idx) => (
-                        <div key={idx} className="relative aspect-square rounded-xl overflow-hidden border border-slate-200 group">
-                            <img src={typeof photo === 'string' ? photo : URL.createObjectURL(photo)} alt="Gallery" className="w-full h-full object-cover" />
-                            {!isView && (
-                                <button type="button" onClick={() => {
-                                    const newGallery = [...formData.galleryPhotos];
-                                    newGallery.splice(idx, 1);
-                                    set('galleryPhotos', newGallery);
-                                }} className="absolute top-1 right-1 w-5 h-5 bg-white shadow-sm rounded-full flex items-center justify-center text-rose-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 hover:text-white"><X size={10} /></button>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <div className="p-8 border-2 border-dashed border-slate-100 rounded-2xl flex flex-col items-center justify-center text-slate-300">
-                    <ImageIcon size={32} strokeWidth={1} />
-                    <span className="text-[11px] font-medium mt-2">No gallery photos</span>
-                </div>
-            )}
+        {/* Gallery Photos — uses ImageGalleryUpload */}
+        <div>
+          <ImageGalleryUpload
+            images={formData.galleryPhotos || []}
+            onAdd={(files) => set('galleryPhotos', [...(formData.galleryPhotos || []), ...files])}
+            onRemove={(idx) => {
+              const updated = [...(formData.galleryPhotos || [])];
+              updated.splice(idx, 1);
+              set('galleryPhotos', updated);
+            }}
+            onImageClick={() => {}}
+            maxImages={8}
+            disabled={isView}
+            title="Gallery Photos"
+          />
         </div>
       </div>
     </div>

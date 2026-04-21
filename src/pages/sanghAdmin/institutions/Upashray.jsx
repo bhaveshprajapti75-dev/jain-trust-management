@@ -189,20 +189,12 @@ export default function Upashray() {
 
   const columns = [
     { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
-    { key: 'name', label: 'Upashray Name', align: 'center', sortable: true, render: (v, r) => (
-      <div className="flex flex-col items-center">
-        <span className="font-bold text-emerald-600">{v}</span>
-        <span className="text-xs text-slate-400 truncate max-w-[200px]">
-          {r.allocationType}
-        </span>
-      </div>
+    { key: 'name', label: 'Upashray Name', align: 'center', sortable: true, render: v => (
+      <span className="font-bold text-emerald-600">{v}</span>
     )},
     { key: 'trustName', label: 'Sangh', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
-    { key: 'city', label: 'Village / City', align: 'center', render: (v, r) => (
-      <div className="flex flex-col items-center">
-        <span className="text-slate-600 font-medium text-sm">{v}</span>
-        <span className="text-xs text-slate-400">{r.district || ''}</span>
-      </div>
+    { key: 'city', label: 'Village / City', align: 'center', render: v => (
+      <span className="text-slate-600 font-medium text-sm">{v}</span>
     )},
     { key: 'hallCapacity', label: 'Hall Capacity', align: 'center' },
     { key: 'status', label: 'Status', align: 'center', render: (v, r) => (

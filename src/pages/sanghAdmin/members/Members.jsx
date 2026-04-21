@@ -113,14 +113,20 @@ const CustomSelect = ({
   icon: Icon,
   placeholder,
   error,
+  disabled
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [openUp, setOpenUp] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, openUp: false });
   const containerRef = useRef(null);
+  const portalRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target))
+      if (
+        containerRef.current && 
+        !containerRef.current.contains(e.target) &&
+        (!portalRef.current || !portalRef.current.contains(e.target))
+      )
         setIsOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -128,11 +134,18 @@ const CustomSelect = ({
   }, []);
 
   const handleToggle = () => {
+    if (disabled) return;
     if (!isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const spaceBelow = window.innerHeight - rect.bottom;
       // Max height of dropdown is ~220px, check if we have enough space
-      setOpenUp(spaceBelow < 220 && rect.top > spaceBelow);
+      const shouldOpenUp = spaceBelow < 250 && rect.top > 250;
+      setCoords({
+        top: shouldOpenUp ? rect.top : rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        openUp: shouldOpenUp
+      });
     }
     setIsOpen(!isOpen);
   };
@@ -145,11 +158,12 @@ const CustomSelect = ({
       </label>
       <button
         type="button"
+        disabled={disabled}
         onClick={handleToggle}
         className={`w-full h-[36px] px-4 rounded-xl border flex items-center justify-between text-sm transition-all focus:ring-4 focus:ring-teal-50 ${error
           ? "border-rose-300 bg-rose-50/30"
           : "border-slate-200 bg-slate-50/50 hover:bg-white hover:border-teal-300"
-          }`}
+          } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <span className={value ? "text-slate-700 font-medium" : "text-slate-400"}>
           {value || placeholder}
@@ -159,8 +173,17 @@ const CustomSelect = ({
         />
       </button>
 
-      {isOpen && (
-        <div className={`absolute z-[60] w-full bg-white rounded-xl border border-slate-100 shadow-[0_15px_40px_-12px_rgba(0,0,0,0.15)] py-1.5 overflow-hidden animate-in zoom-in-95 duration-200 ${openUp ? "bottom-full mb-1.5" : "top-full mt-1.5"}`}>
+      {isOpen && createPortal(
+        <div 
+          ref={portalRef}
+          className={`fixed z-[10000] bg-white rounded-xl border border-slate-100 shadow-[0_15px_40px_-12px_rgba(0,0,0,0.15)] py-1.5 overflow-hidden animate-in zoom-in-95 duration-200 ${coords.openUp ? "mb-1.5" : "mt-1.5"}`}
+          style={{
+            top: coords.openUp ? "auto" : coords.top,
+            bottom: coords.openUp ? window.innerHeight - coords.top : "auto",
+            left: coords.left,
+            width: coords.width
+          }}
+        >
           <div className="max-h-[220px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
             {options.map((opt) => (
               <button
@@ -176,7 +199,8 @@ const CustomSelect = ({
               </button>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
       {error && (
         <p className="mt-1.5 ml-1 text-[11px] font-bold text-rose-500 animate-in fade-in slide-in-from-top-1">

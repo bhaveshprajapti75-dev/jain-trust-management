@@ -33,7 +33,6 @@ import Pagination from "../../../components/ui/Pagination";
 import DatePicker from "../../../components/ui/DatePicker";
 import { useToast } from "../../../components/ui/Toast";
 import ActionButtons from "../../../components/ui/ActionButtons";
-import { sanghService, authService } from "../../../services/apiService";
 
 const INITIAL_FORM = {
   name: "",
@@ -61,29 +60,18 @@ export default function CommitteeMembers() {
   const [saving, setSaving] = useState(false);
   const showToast = useToast();
 
-  const fetchMembers = async () => {
+  const fetchMembers = () => {
     try {
       setLoading(true);
-      
-      // Step 1: Fetch Profile to get assigned Sangh ID
-      const profile = await authService.getProfile();
-      const scopeId = 
-        profile?.user?.scope_id || 
-        profile?.scope_id || 
-        profile?.user?.sangh_id || 
-        profile?.sangh_id ||
-        profile?.sangh || 
-        profile?.user?.sangh;
-
-      if (!scopeId) {
+      const stored = sessionStorage.getItem("sangh_committee_members");
+      if (stored) {
+        setMembers(JSON.parse(stored));
+      } else {
         setMembers([]);
-        return;
       }
-      
-      const data = await sanghService.getCommitteeMembers(scopeId);
-      setMembers(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Failed to fetch committee members", error);
+      console.error("Failed to load committee members from storage", error);
+      setMembers([]);
     } finally {
       setLoading(false);
     }

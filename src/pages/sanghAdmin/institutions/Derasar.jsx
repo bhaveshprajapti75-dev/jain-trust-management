@@ -175,18 +175,12 @@ export default function Derasar() {
 
   const columns = [
     { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
-    { key: 'name', label: 'Derasar Name', align: 'center', sortable: true, render: (v, r) => (
-      <div className="flex flex-col items-center">
-        <span className="font-bold text-slate-800">{v}</span>
-        <span className="text-xs text-slate-400">{r.type || ''}</span>
-      </div>
+    { key: 'name', label: 'Derasar Name', align: 'center', sortable: true, render: v => (
+      <span className="font-bold text-slate-800">{v}</span>
     )},
     { key: 'moolNayak', label: 'Mool Nayak', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
-    { key: 'city', label: 'Village / City', align: 'center', render: (v, r) => (
-      <div className="flex flex-col items-center">
-        <span className="text-slate-600 font-medium text-sm">{v}</span>
-        <span className="text-xs text-slate-400">{r.district || ''}</span>
-      </div>
+    { key: 'city', label: 'Village / City', align: 'center', render: v => (
+      <span className="text-slate-600 font-medium text-sm">{v}</span>
     )},
     { key: 'pratimas', label: 'Pratimas', align: 'center' },
     { key: 'poojaris', label: 'Poojaris', align: 'center' },

@@ -29,7 +29,7 @@ export default function FilterBar({
     <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-center gap-2 px-4 h-[40px] rounded-lg text-[13.5px] font-bold transition-all border ${
+        className={`flex items-center justify-center gap-2 px-4 h-[40px] rounded-lg text-[13.5px] font-bold border ${
           isOpen || hasActive
             ? "bg-emerald-50 border-emerald-200 text-emerald-800"
             : "bg-white border-slate-200 text-slate-600 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700"
@@ -40,7 +40,7 @@ export default function FilterBar({
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-3 w-72 rounded-2xl z-[100] p-5 shadow-xl border border-slate-200 bg-white animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-3 w-72 rounded-2xl z-[100] p-5 shadow-lg border border-slate-200 bg-white">
           <div className="space-y-4">
             {(options || []).map((opt) => (
               <div key={opt.key} className="space-y-2">
@@ -49,7 +49,7 @@ export default function FilterBar({
                   <select
                     value={filters?.[opt.key] || ""}
                     onChange={(e) => onChange(opt.key, e.target.value)}
-                    className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-700 outline-none appearance-none hover:border-emerald-500 focus:border-emerald-600 focus:bg-emerald-50/20 transition-all cursor-pointer shadow-sm"
+                    className="w-full pl-3 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-700 outline-none appearance-none hover:border-emerald-500 focus:border-emerald-600 cursor-pointer"
                   >
                     <option value="">All</option>
                     {(opt.items || []).map((item) => {
@@ -67,17 +67,17 @@ export default function FilterBar({
               </div>
             ))}
 
-            <div className="flex gap-2 pt-3 mt-4 border-t border-slate-100">
+            <div className="flex gap-2 pt-3 mt-3 border-t border-slate-100">
               <button
                 onClick={() => setIsOpen(false)}
-                className="flex-1 py-2.5 rounded-xl text-[13px] font-bold text-white border border-emerald-700 bg-emerald-700 hover:bg-emerald-800 transition-all shadow-sm"
+                className="flex-1 h-9 rounded-lg text-[12px] font-bold text-white border border-emerald-700 bg-emerald-700 hover:bg-emerald-800 transition-all shadow-sm"
               >
                 Apply
               </button>
               {hasActive && (
                 <button
                   onClick={() => { onClear(); setIsOpen(false); }}
-                  className="px-4 py-2.5 border border-slate-200 bg-slate-50 text-slate-600 text-[13px] font-bold rounded-xl hover:bg-slate-100 transition-all shadow-sm"
+                  className="px-4 h-9 border border-slate-200 bg-slate-50 text-slate-600 text-[12px] font-bold rounded-lg hover:bg-slate-100 transition-all shadow-sm"
                 >
                   Clear
                 </button>

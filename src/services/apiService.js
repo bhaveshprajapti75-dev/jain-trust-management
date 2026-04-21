@@ -151,13 +151,11 @@ export const locationService = {
   deleteLocation: (id) => apiService.delete(`v1/locations/${id}/`),
   batchUpdate: (data) => apiService.post('v1/locations/batch/', data),
 };
-
 // Sangh Administration Service
 export const sanghService = {
   getDetails: (id) => apiService.get(`v1/sangh/${id}/`),
   updateDetails: (id, data) => apiService.put(`v1/sangh/${id}/`, data),
   getLinkedTrusts: (id) => apiService.get(`v1/sangh/${id}/trusts/`),
-  getCommitteeMembers: (sanghId) => apiService.get(`v1/sangh/contact/`, { sangh: sanghId }),
   updateTrust: (id, data) => apiService.put(`v1/trusts/${id}/`, data),
   removeTrust: (id) => apiService.delete(`v1/trusts/${id}/`),
 };

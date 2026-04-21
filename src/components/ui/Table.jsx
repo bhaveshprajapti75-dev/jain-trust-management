@@ -41,28 +41,26 @@ export default function Table({  // Add 'default' here
           <thead>
             <tr className={`${headerBgClass} text-white text-[13px] font-semibold h-11`}>
               {columns.map((col) => {
-                const isSorted = sortKey === col.key;
                 return (
                   <th 
                     key={col.key} 
-                    className={`${col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'} px-5 py-3 tracking-wider ${col.sortable ? 'cursor-pointer select-none hover:text-emerald-900 transition-colors' : ''}`}
+                    className={`${col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'} px-5 py-3 tracking-wider ${col.sortable ? 'cursor-pointer select-none transition-colors' : ''}`}
                     onClick={() => { if (col.sortable && onSort) onSort(col.key); }}
                   >
-                    <span className={`inline-flex items-center gap-1 ${col.align === 'center' ? 'justify-center' : col.align === 'right' ? 'justify-end' : ''}`}>
+                    <div className={`flex items-center gap-2 ${col.align === 'center' ? 'justify-center' : col.align === 'right' ? 'justify-end' : 'justify-start'}`}>
                       {col.label}
-                      {col.sortable && isSorted && (sortDir === 'asc' ? <ChevronUp className="w-3 h-3 text-white" /> : <ChevronDown className="w-3 h-3 text-white" />)}
-                    </span>
+                    </div>
                   </th>
                 );
               })}
              </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="bg-white">
             {data.map((row, i) => (
               <tr 
                 key={row?.[rowKey] || i} 
                 onClick={() => { if (onRowClick) onRowClick(row); }}
-                className={`transition-colors group border-b border-slate-200 last:border-none ${onRowClick ? 'cursor-pointer hover:bg-slate-50/50' : ''}`}
+                className={`group border-b border-slate-200 last:border-none ${onRowClick ? 'cursor-pointer' : ''}`}
               >
                 {columns.map((col) => (
                   <td key={col.key} className={`px-5 py-3 ${col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'}`}>

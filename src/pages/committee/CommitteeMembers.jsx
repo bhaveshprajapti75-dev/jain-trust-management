@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Users, ShieldCheck, Building2, Plus } from 'lucide-react'
 import Button from '../../components/ui/Button'
@@ -13,22 +13,9 @@ export default function CommitteeMembers() {
   const navigate = useNavigate()
   const location = useLocation()
   const [search, setSearch] = useState('')
-  const [users] = useState(function() {
-    try {
-      const stored = localStorage.getItem('users_full')
-      return stored ? JSON.parse(stored) : INITIAL_USERS
-    } catch {
-      return INITIAL_USERS
-    }
-  })
-  const [docs] = useState(function() {
-    try {
-      const stored = localStorage.getItem('user_docs')
-      return stored ? JSON.parse(stored) : INITIAL_USER_DOCS
-    } catch {
-      return INITIAL_USER_DOCS
-    }
-  })
+  const [loading, setLoading] = useState(true)
+  const [committeeData, setCommitteeData] = useState([])
+  
   const [roles] = useState(function() {
     try {
       const stored = localStorage.getItem('rp_roles')
@@ -38,28 +25,34 @@ export default function CommitteeMembers() {
     }
   })
 
-  const committeeMembers = useMemo(function() {
-    return users.filter(function(user) {
+  useEffect(() => {
+    // Reverting to local data from userData.jsx
+    const members = INITIAL_USERS.filter(user => user.committee === true)
+    setCommitteeData(members)
+    setLoading(false)
+  }, [])
+
+  const filteredMembers = useMemo(function() {
+    return committeeData.filter(function(user) {
       const query = search.toLowerCase()
-      const isCommittee = user.committee === true
-      const matchesSearch = !query || [user.name, user.committeeRole, user.notes].some(function(value) {
+      const matchesSearch = !query || [user.name, user.role, user.notes].some(function(value) {
         return String(value || '').toLowerCase().includes(query)
       })
-      return isCommittee && matchesSearch
+      return matchesSearch
     })
-  }, [search, users])
+  }, [search, committeeData])
 
   const stats = useMemo(function() {
-    const active = committeeMembers.filter(function(user) { return user.status === 'Active' }).length
-    const rolesCovered = new Set(committeeMembers.map(function(user) { return user.roleId })).size
-    const sanghsCovered = new Set(committeeMembers.map(function(user) { return user.sanghId })).size
+    const active = filteredMembers.filter(function(user) { return user.status === 'Active' }).length
+    const rolesCovered = new Set(filteredMembers.map(function(user) { return user.roleId || user.role })).size
+    const sanghsCovered = new Set(filteredMembers.map(function(user) { return user.sanghId || 1 })).size
     return [
-      { title: 'Committee Members', value: committeeMembers.length, icon: Users, color: 'teal' },
+      { title: 'Committee Members', value: filteredMembers.length, icon: Users, color: 'teal' },
       { title: 'Active Members', value: active, icon: ShieldCheck, color: 'emerald' },
       { title: 'Role Levels', value: rolesCovered, icon: ShieldCheck, color: 'sky' },
       { title: 'Sanghs Covered', value: sanghsCovered, icon: Building2, color: 'amber' },
     ]
-  }, [committeeMembers])
+  }, [filteredMembers])
 
   return (
       <CommonPageLayout
@@ -77,10 +70,7 @@ export default function CommitteeMembers() {
       onTabChange={(tabId) => navigate(tabId)}
       action={<Button icon={Plus} onClick={function() { navigate('/users') }}>Add Member</Button>}
       stats={stats}
-      searchValue={search}
-      onSearchChange={setSearch}
-      searchPlaceholder="Search committee name, role, or notes..."
-      isEmpty={!committeeMembers.length}
+      isEmpty={!filteredMembers.length}
       emptyState={<EmptyState message="No committee members found" description="Assign committee members from the users list to see them here." icon={Users} />}
       contentClassName="p-0 border-none bg-transparent shadow-none"
     >
@@ -108,21 +98,15 @@ export default function CommitteeMembers() {
             },
             {
               key: 'role',
-              label: 'Role & Permissions',
-              render: (_, user) => {
-                const role = roles.find(item => item.id === user.roleId)
-                return (
-                  <div className="flex flex-col gap-1 items-start">
-                    <span className="text-[12.5px] font-bold text-slate-700">{role?.name || '-'}</span>
-                    <span className="text-[9.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">{role?.type || 'No Role'}</span>
-                  </div>
-                )
-              }
-            },
-            {
-              key: 'committeeRole',
-              label: 'Committee Role',
-              render: (_, user) => <span className="text-[12.5px] font-medium text-slate-600">{user.committeeRole || 'Member'}</span>
+              label: 'Position',
+              render: (_, user) => (
+                <div className="flex flex-col gap-1 items-start">
+                  <span className="text-[12.5px] font-bold text-slate-700">{user.role || '-'}</span>
+                  {user.roleType && (
+                    <span className="text-[9.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">{user.roleType}</span>
+                  )}
+                </div>
+              )
             },
             {
               key: 'status',
@@ -156,7 +140,8 @@ export default function CommitteeMembers() {
               )
             }
           ]}
-          data={committeeMembers}
+          data={filteredMembers}
+          loading={loading}
           skipCard={true}
           onRowClick={(user) => navigate('/users/' + user.id)}
         />

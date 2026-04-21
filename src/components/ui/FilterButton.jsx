@@ -54,19 +54,19 @@ export default function FilterButton({ filters, options, onChange, onClear, data
           }
           setIsOpen(!isOpen);
         }}
-        className={`flex items-center gap-1.5 px-4 h-10 rounded-xl border transition-all duration-300 text-[13px] font-bold shadow-sm ${
+        className={`flex items-center gap-1.5 px-4 h-10 rounded-xl border text-[13px] font-bold ${
           hasActive 
-            ? "bg-emerald-50 border-emerald-200 text-emerald-700 shadow-emerald-100 hover:bg-emerald-100 hover:border-emerald-300 active:scale-95" 
-            : "bg-white border-slate-200 text-slate-600 hover:border-emerald-300 hover:bg-slate-50 active:scale-95"
+            ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100" 
+            : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
         }`}
       >
-        <SlidersHorizontal className={`w-4 h-4 transition-colors ${hasActive ? "text-emerald-600" : "text-slate-400"}`} />
+        <SlidersHorizontal className={`w-4 h-4 ${hasActive ? "text-emerald-600" : "text-slate-400"}`} />
         <span>Filter</span>
-        <ChevronDown className={`w-4 h-4 transition-all duration-300 ${isOpen ? "rotate-180" : ""} ${hasActive ? "text-emerald-500" : "text-slate-400"}`} />
+        <ChevronDown className={`w-4 h-4 ${isOpen ? "rotate-180" : ""} ${hasActive ? "text-emerald-500" : "text-slate-400"}`} />
       </button>
 
       {isOpen && (
-        <div className={`absolute right-0 w-72 bg-white rounded-2xl border border-slate-100 shadow-2xl z-[100] p-5 animate-in fade-in zoom-in-95 duration-200 origin-top-right ${openUp ? "bottom-full mb-3" : "top-full mt-3"}`}>
+        <div className={`absolute right-0 w-72 bg-white rounded-2xl border border-slate-200 shadow-lg z-[100] p-5 origin-top-right ${openUp ? "bottom-full mb-3" : "top-full mt-3"}`}>
           <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-50">
             <h3 className="text-[14px] font-bold text-slate-800">Filter By</h3>
             {hasActive && (
@@ -101,19 +101,19 @@ export default function FilterButton({ filters, options, onChange, onClear, data
             ))}
           </div>
 
-          <div className="mt-7 flex items-center gap-3">
+          <div className="mt-5 flex items-center gap-2.5">
             <button
               onClick={() => {
                 onClear();
                 setIsOpen(false);
               }}
-              className="flex-1 h-[42px] bg-slate-50 text-slate-600 text-[13px] font-bold rounded-xl transition-all hover:bg-slate-100 active:scale-95"
+              className="flex-1 h-9 bg-slate-50 text-slate-600 text-[12px] font-bold rounded-lg hover:bg-slate-100"
             >
               Reset
             </button>
             <button
               onClick={handleApply}
-              className="flex-1 h-[42px] bg-emerald-600 text-white text-[13px] font-bold rounded-xl transition-all hover:bg-emerald-700 shadow-lg shadow-emerald-200 active:scale-95"
+              className="flex-1 h-9 bg-emerald-600 text-white text-[12px] font-bold rounded-lg hover:bg-emerald-700"
             >
               Apply
             </button>
@@ -164,9 +164,9 @@ function CustomSelect({ value, options, onChange, placeholder }) {
         }}
         className={`
           w-full flex items-center justify-between
-          px-4 py-2.5 rounded-xl border transition-all duration-300
+          px-4 py-2.5 rounded-xl border
           text-[13px] font-bold
-          ${isOpen ? "border-emerald-500 ring-4 ring-emerald-50 text-emerald-700 bg-white" : 
+          ${isOpen ? "border-emerald-500 text-emerald-700 bg-white" : 
             isAnythingSelected 
               ? "border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50" 
               : "border-slate-200 bg-white text-slate-400 hover:border-slate-300 hover:bg-slate-50"}
@@ -177,7 +177,7 @@ function CustomSelect({ value, options, onChange, placeholder }) {
         </span>
 
         <ChevronDown
-          className={`w-4 h-4 transition-transform duration-300 ${
+          className={`w-4 h-4 ${
             isOpen ? "rotate-180 text-emerald-600" : isAnythingSelected ? "text-emerald-500" : "text-slate-300"
           }`}
         />
@@ -186,9 +186,8 @@ function CustomSelect({ value, options, onChange, placeholder }) {
       {isOpen && (
         <div
           className={`
-            absolute left-0 right-0 z-[110] py-1.5 rounded-xl shadow-2xl
-            bg-white border border-slate-100 overflow-hidden
-            animate-in fade-in zoom-in-95 duration-200
+            absolute left-0 right-0 z-[110] py-1.5 rounded-xl shadow-xl
+            bg-white border border-slate-200 overflow-hidden
             ${openUp ? "bottom-full mb-2" : "top-full mt-2"}
           `}
         >
@@ -207,10 +206,10 @@ function CustomSelect({ value, options, onChange, placeholder }) {
                     setIsOpen(false);
                   }}
                   className={`
-                    w-full flex items-center justify-between px-3 py-2.5 my-0.5 rounded-lg text-[13px] font-bold transition-all duration-200
+                    w-full flex items-center justify-between px-3 py-2.5 my-0.5 rounded-lg text-[13px] font-bold
                     ${isSelected
-                      ? "bg-emerald-600 text-white shadow-md shadow-emerald-200 scale-[1.02] hover:bg-emerald-700"
-                      : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 hover:pl-4"
+                      ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                      : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-700"
                     }
                   `}
                 >
