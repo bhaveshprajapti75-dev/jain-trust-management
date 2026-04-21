@@ -17,6 +17,8 @@ import Input from '../../../components/ui/Input';
 import Pagination from '../../../components/ui/Pagination';
 import CustomDropdown from '../../../components/ui/CustomDropdown';
 import TimePicker from '../../../components/ui/TimePicker';
+import ActionButtons from '../../../components/ui/ActionButtons';
+import ImageGalleryUpload from '../../../components/ui/ImageGalleryUpload';
 
 // ── Tab config ──────────────────────────────────────────────────────────────
 const TABS = ['Institute Details', 'Location', 'Contact & Management'];
@@ -123,9 +125,9 @@ export default function Pathshala() {
   }, [filteredData, currentPage, recordsPerPage]);
 
   const stats = useMemo(() => [
-    { title: 'TOTAL INSTITUTES', value: pathshalas.length, icon: School, color: 'sky' },
-    { title: 'ACTIVE INSTITUTES', value: pathshalas.filter(p => p.status === 'Active').length, icon: Check, color: 'teal' },
-    { title: 'INACTIVE INSTITUTES', value: pathshalas.filter(p => p.status === 'Inactive').length, icon: X, color: 'rose' },
+    { title: 'Total Institutes', value: pathshalas.length, icon: School, color: 'sky' },
+    { title: 'Active Institutes', value: pathshalas.filter(p => p.status === 'Active').length, icon: Check, color: 'teal' },
+    { title: 'Inactive Institutes', value: pathshalas.filter(p => p.status === 'Inactive').length, icon: X, color: 'rose' },
   ], [pathshalas]);
 
   const openModal = (mode, item = null) => {
@@ -184,30 +186,31 @@ export default function Pathshala() {
 
 
   const columns = [
-    { key: 'id', label: 'SR. NO', align: 'center', render: (_, __, i) => i + 1 },
-    { key: 'name', label: 'INSTITUTE NAME', sortable: true, render: (v, r) => (
-      <div className="flex flex-col">
+    { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
+    { key: 'name', label: 'Institute Name', align: 'center', sortable: true, render: (v, r) => (
+      <div className="flex flex-col items-center">
         <span className="font-bold text-teal-600">{v}</span>
         <span className="text-xs text-slate-400">
           {Array.isArray(r.medium) ? r.medium.join(', ') : r.medium}
         </span>
       </div>
     )},
-    { key: 'trustName', label: 'SANGH', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
-    { key: 'city', label: 'VILLAGE / CITY', render: (v, r) => (
-      <div className="flex flex-col">
+    { key: 'trustName', label: 'Sangh', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
+    { key: 'city', label: 'Village / City', align: 'center', render: (v, r) => (
+      <div className="flex flex-col items-center">
         <span className="text-slate-600 font-medium text-sm">{v}</span>
         <span className="text-xs text-slate-400">{r.district || ''}</span>
       </div>
     )},
-    { key: 'totalTeachers', label: 'TEACHERS', align: 'center' },
-    { key: 'status', label: 'STATUS', align: 'center', render: (v, r) => <StatusToggle status={v === 'Active'} onToggle={() => toggleStatus(r)} /> },
-    { key: 'actions', label: 'ACTION', align: 'center', render: (_, r) => (
-      <div className="flex items-center justify-center gap-2">
-        <button onClick={() => openModal('view', r)} className="w-8 h-8 flex items-center justify-center text-teal-500 bg-teal-50 hover:bg-teal-100 rounded-full transition-all"><Eye size={15} /></button>
-        <button onClick={() => openModal('edit', r)} className="w-8 h-8 flex items-center justify-center text-sky-500 bg-sky-50 hover:bg-sky-100 rounded-full transition-all border border-sky-100"><Pencil size={15} /></button>
-        <button onClick={() => { setItemToDelete(r); setIsDeleteModalOpen(true); }} className="w-8 h-8 flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-full transition-all border border-rose-100"><Trash2 size={15} /></button>
-      </div>
+    { key: 'totalTeachers', label: 'Teachers', align: 'center' },
+    { key: 'status', label: 'Status', align: 'center', render: (v, r) => <StatusToggle status={v === 'Active'} onToggle={() => toggleStatus(r)} /> },
+    { key: 'actions', label: 'Action', align: 'center', render: (_, r) => (
+      <ActionButtons
+        onView={row => openModal('view', row)}
+        onEdit={row => openModal('edit', row)}
+        onDelete={row => { setItemToDelete(row); setIsDeleteModalOpen(true); }}
+        row={r}
+      />
     )}
   ];
 
@@ -250,18 +253,18 @@ export default function Pathshala() {
     <div className="flex items-center gap-3">
       {!isView ? (
         <>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => setIsModalOpen(false)}
-            className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 transition-all active:scale-95"
+            className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all shadow-sm"
           >
             Cancel
-          </button>
+          </Button>
           {activeTab < TABS.length - 1 ? (
             <Button
               variant="emerald"
               onClick={() => setActiveTab((t) => t + 1)}
-              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
             >
               Next
             </Button>
@@ -269,81 +272,98 @@ export default function Pathshala() {
             <Button
               variant="emerald"
               onClick={handleSave}
-              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
             >
               {modalMode === "add" ? "Submit" : "Update"}
             </Button>
           )}
         </>
       ) : (
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={() => setIsModalOpen(false)}
-          className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 transition-all"
+          className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 shadow-sm"
         >
           Close
-        </button>
+        </Button>
       )}
     </div>
   );
 
   return (
     <CommonPageLayout title="Institute Management" stats={stats}>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-        <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search Institute, City, or Sangh..."
-            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
-          />
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search Institute, City, or Sangh..."
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <FilterButton
+              filters={filters}
+              options={[
+                {
+                  key: "status",
+                  placeholder: "Status",
+                  items: [
+                    { label: "Active", value: "Active" },
+                    { label: "Inactive", value: "Inactive" },
+                  ],
+                },
+                {
+                  key: "district",
+                  placeholder: "City",
+                  items: GUJARAT_DISTRICTS.map((d) => ({ label: d, value: d })),
+                },
+              ]}
+              onChange={(k, v) => {
+                setFilters((p) => ({ ...p, [k]: v }));
+                setCurrentPage(1);
+              }}
+              onClear={() => {
+                setFilters({ status: "All", district: "All" });
+                setCurrentPage(1);
+              }}
+              dataCount={filteredData.length}
+              className="h-10 rounded-lg border-gray-300"
+            />
+            <Button
+              variant="emerald"
+              icon={Plus}
+              onClick={() => openModal("add")}
+              className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+            >
+              ADD INSTITUTE
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <FilterButton
-            filters={filters}
-            options={[
-              {
-                key: "status",
-                placeholder: "Status",
-                items: [
-                  { label: "Active", value: "Active" },
-                  { label: "Inactive", value: "Inactive" },
-                ],
-              },
-              {
-                key: "district",
-                placeholder: "City",
-                items: GUJARAT_DISTRICTS.map((d) => ({ label: d, value: d })),
-              },
-            ]}
-            onChange={(k, v) => {
-              setFilters((p) => ({ ...p, [k]: v }));
-              setCurrentPage(1);
-            }}
-            onClear={() => {
-              setFilters({ status: "All", district: "All" });
-              setCurrentPage(1);
-            }}
-            dataCount={filteredData.length}
-            className="h-10 rounded-lg border-gray-300"
-          />
-          <Button
-            variant="emerald"
-            icon={Plus}
-            onClick={() => openModal("add")}
-            className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
-          >
-            ADD INSTITUTE
-          </Button>
-        </div>
-      </div>
 
-      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
-        <Table variant="emerald" columns={columns} data={paginatedData} loading={loading} skipCard={true} />
+        <div className="overflow-hidden border border-gray-300 rounded-lg bg-white mb-4">
+          <div className="m-3 mt-3">
+            <Table 
+              variant="emerald" 
+              columns={columns} 
+              data={paginatedData} 
+              loading={loading} 
+              skipCard={true} 
+            />
+          </div>
+        </div>
+        
+        <Pagination 
+          currentPage={currentPage} 
+          totalRecords={filteredData.length} 
+          recordsPerPage={recordsPerPage} 
+          onPageChange={setCurrentPage} 
+          onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} 
+        />
       </div>
-      <Pagination currentPage={currentPage} totalRecords={filteredData.length} recordsPerPage={recordsPerPage} onPageChange={setCurrentPage} onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} />
 
 
       <Modal
@@ -353,17 +373,23 @@ export default function Pathshala() {
         title={modalHeader}
         footer={modalFooter}
       >
-        <div className="px-1 sm:px-2 py-2 grid">
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeTab === 0 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none invisible'}`}>
+        <div className="px-1 sm:px-2 py-2 overflow-x-hidden">
+          {activeTab === 0 && (
+            <div className="animate-in fade-in duration-300">
               <Tab1 formData={formData} set={set} isView={isView} onImageClick={setPreviewImage} />
             </div>
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeTab === 1 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none invisible'}`}>
+          )}
+          {activeTab === 1 && (
+            <div className="animate-in fade-in duration-300">
               <Tab2 formData={formData} set={set} isView={isView} />
             </div>
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeTab === 2 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none invisible'}`}>
+          )}
+          {activeTab === 2 && (
+            <div className="animate-in fade-in duration-300">
               <Tab3 formData={formData} set={set} isView={isView} />
             </div>
-          </div>
+          )}
+        </div>
       </Modal>
 
       <ConfirmModal isOpen={isDeleteModalOpen} onClose={() => setIsDeleteModalOpen(false)} onConfirm={handleDelete} title="Delete Institute" message={`Delete "${itemToDelete?.name}"?`} confirmLabel="Delete" variant="danger" />
@@ -397,151 +423,27 @@ export default function Pathshala() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function Tab1({ formData, set, isView, onImageClick }) {
-  const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef(null);
-  const galleryRef = useRef(null);
-  const cameraRef = useRef(null);
-
-  // Close menu on click outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleFileChange = (e) => {
-    const filesArray = Array.from(e.target.files);
-    if (filesArray.length > 0) {
-      set('photos', [...(formData.photos || []), ...filesArray]);
-    }
-    setShowMenu(false);
-    // Reset inputs so the same file can be selected again if needed
-    if (galleryRef.current) galleryRef.current.value = '';
-    if (cameraRef.current) cameraRef.current.value = '';
-  };
-
-  const removePhoto = (idx) => {
-    const newPhotos = [...formData.photos];
-    newPhotos.splice(idx, 1);
-    set('photos', newPhotos);
-  };
-
   return (
     <div className="flex flex-col lg:flex-row gap-10">
       <div className="flex-shrink-0">
-        <div className="w-[340px] space-y-4">
-          <div className="flex items-center justify-between px-1">
-            <label className="text-[13px] font-bold text-slate-700">Institute Gallery</label>
-            {!isView && (formData.photos?.length || 0) < 8 && (
-              <div className="relative" ref={menuRef}>
-                <button 
-                  type="button"
-                  onClick={() => setShowMenu(!showMenu)}
-                  className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center hover:bg-teal-100 transition-all shadow-sm border border-teal-100"
-                >
-                  <Plus size={18} />
-                </button>
-
-                {showMenu && (
-                  <div className="absolute top-full right-0 mt-2 z-[60] bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 min-w-[220px] animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                    <button 
-                      type="button"
-                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50/50 group transition-all"
-                      onClick={() => galleryRef.current.click()}
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all">
-                        <ImageIcon size={18} />
-                      </div>
-                      <div className="flex flex-col items-start translate-y-[1px]">
-                        <span className="text-[13px] font-bold text-slate-700">Gallery</span>
-                        <span className="text-[10px] text-slate-400 font-medium leading-none mt-0.5">Upload from device</span>
-                      </div>
-                    </button>
-                    <button 
-                      type="button"
-                      className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-teal-50/50 group transition-all"
-                      onClick={() => cameraRef.current.click()}
-                    >
-                      <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all">
-                        <Camera size={18} />
-                      </div>
-                      <div className="flex flex-col items-start translate-y-[1px]">
-                        <span className="text-[13px] font-bold text-slate-700">Camera</span>
-                        <span className="text-[10px] text-slate-400 font-medium leading-none mt-0.5">Take a photo</span>
-                      </div>
-                    </button>
-                  </div>
-                )}
-                
-                <input type="file" ref={galleryRef} multiple accept="image/*" className="hidden" onChange={handleFileChange} />
-                <input type="file" ref={cameraRef} accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
-              </div>
-            )}
-          </div>
-          
-          <div className="space-y-3">
-            {/* Main Preview */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 shadow-sm">
-              {formData.photos?.length > 0 ? (
-                <img 
-                  src={typeof formData.photos[0] === 'string' ? formData.photos[0] : URL.createObjectURL(formData.photos[0])} 
-                  alt="Main Preview" 
-                  className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform duration-700"
-                  onClick={() => onImageClick(formData.photos[0])}
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 gap-2">
-                  <ImageIcon size={40} strokeWidth={1.5} />
-                  <span className="text-[12px] font-medium">No images uploaded</span>
-                </div>
-              )}
-            </div>
-
-            {/* Thumbnails Grid */}
-            <div className="grid grid-cols-4 gap-2">
-              {formData.photos?.map((photo, idx) => (
-                <div 
-                  key={idx} 
-                  className={`relative group aspect-square rounded-xl overflow-hidden border transition-all duration-300 ${idx === 0 ? 'border-teal-500 ring-2 ring-teal-500/20' : 'border-slate-200'}`}
-                >
-                  <img 
-                    src={typeof photo === 'string' ? photo : URL.createObjectURL(photo)} 
-                    alt={`Thumb ${idx + 1}`} 
-                    className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" 
-                    onClick={() => onImageClick(photo)}
-                  />
-                  {!isView && (
-                    <button 
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        removePhoto(idx);
-                      }}
-                      className="absolute top-1 right-1 w-5 h-5 bg-white/90 backdrop-blur shadow rounded-full flex items-center justify-center text-rose-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-rose-500 hover:text-white"
-                    >
-                      <X size={10} />
-                    </button>
-                  )}
-                </div>
-              ))}
-              
-              {/* Empty placeholder for next upload */}
-              {/* Empty placeholder removed as requested */}
-            </div>
-          </div>
-          
-          {!isView && (
-            <p className="text-[10px] text-slate-400 font-medium text-center italic">
-              * Supports JPG, PNG. Max 8 photos. First image is primary.
-            </p>
-          )}
+        <div className="w-[260px]">
+          <ImageGalleryUpload 
+            title="Institute Gallery"
+            images={formData.photos || []}
+            onAdd={(newFiles) => set('photos', [...(formData.photos || []), ...newFiles])}
+            onRemove={(idx) => {
+              const newPhotos = [...(formData.photos || [])];
+              newPhotos.splice(idx, 1);
+              set('photos', newPhotos);
+            }}
+            onImageClick={onImageClick}
+            disabled={isView}
+            maxImages={8}
+          />
         </div>
       </div>
-
+      
+      
       <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
         <Input label="Institute Name" placeholder="Enter Name" value={formData.name} onChange={e => set('name', e.target.value)} required disabled={isView} />
         

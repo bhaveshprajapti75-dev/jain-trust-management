@@ -32,6 +32,7 @@ import Button from "../../../components/ui/Button";
 import Pagination from "../../../components/ui/Pagination";
 import DatePicker from "../../../components/ui/DatePicker";
 import { useToast } from "../../../components/ui/Toast";
+import ActionButtons from "../../../components/ui/ActionButtons";
 import { sanghService, authService } from "../../../services/apiService";
 
 const INITIAL_FORM = {
@@ -187,6 +188,7 @@ export default function CommitteeMembers() {
     {
       key: "sr_no",
       label: "Sr. No",
+      align: 'left',
       render: (_, __, i) => (
         <span className="text-slate-500 font-semibold">
           {(currentPage - 1) * recordsPerPage + i + 1}
@@ -196,10 +198,11 @@ export default function CommitteeMembers() {
     {
       key: "name",
       label: "Member Name",
+      align: 'center',
       render: (n) => <span className="font-bold text-teal-700">{n}</span>,
     },
-    { key: "role", label: "Position" },
-    { key: "phone", label: "Phone" },
+    { key: "role", label: "Position", align: 'center' },
+    { key: "phone", label: "Phone", align: 'center' },
     {
       key: "status",
       label: "Status",
@@ -228,102 +231,89 @@ export default function CommitteeMembers() {
       key: "actions",
       label: "Action",
       align: "center",
-      render: (_, r) => {
-        const btnStyles = {
-          teal: "bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white",
-          sky: "bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white",
-          rose: "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white",
-        };
-
-        return (
-          <div className="flex gap-2 justify-center">
-            {[
-              { icon: Eye, color: "teal", t: "view" },
-              { icon: Edit, color: "sky", t: "edit" },
-              { icon: Trash2, color: "rose", t: "delete" },
-            ].map((a) => (
-              <button
-                key={a.t}
-                onClick={() => openModal(a.t, r)}
-                className={`p-1.5 rounded-xl transition-all duration-200 ${btnStyles[a.color]}`}
-                title={a.t.charAt(0).toUpperCase() + a.t.slice(1)}
-              >
-                <a.icon className="w-4 h-4" />
-              </button>
-            ))}
-          </div>
-        );
-      },
+      render: (_, r) => (
+        <ActionButtons
+          onView={row => openModal('view', row)}
+          onEdit={row => openModal('edit', row)}
+          onDelete={row => openModal('delete', row)}
+          row={r}
+        />
+      ),
     },
   ];
 
   return (
     <CommonPageLayout title="Committee Members" stats={stats}>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-        <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by name..."
-            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
-          />
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by name..."
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+            />
+          </div>
+          <div className="flex gap-2">
+            <FilterButton
+              dataCount={filteredMembers.length}
+              filters={filters}
+              options={[
+                {
+                  key: "status",
+                  placeholder: "Status",
+                  items: [
+                    { label: "Active", value: "Active" },
+                    { label: "Inactive", value: "Inactive" },
+                  ],
+                },
+                {
+                  key: "role",
+                  placeholder: "Position",
+                  items: [...new Set(members.map((m) => m.role))].map((r) => ({
+                    label: r,
+                    value: r,
+                  })),
+                },
+              ]}
+              onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
+              onClear={() => setFilters({ status: "", role: "" })}
+              className="h-10 rounded-lg border-gray-300"
+            />
+            <Button
+              variant="emerald"
+              icon={Plus}
+              onClick={() => setModal({ type: "add", data: null })}
+              className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+            >
+              ADD MEMBER
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <FilterButton
-            dataCount={filteredMembers.length}
-            filters={filters}
-            options={[
-              {
-                key: "status",
-                placeholder: "Status",
-                items: [
-                  { label: "Active", value: "Active" },
-                  { label: "Inactive", value: "Inactive" },
-                ],
-              },
-              {
-                key: "role",
-                placeholder: "Position",
-                items: [...new Set(members.map((m) => m.role))].map((r) => ({
-                  label: r,
-                  value: r,
-                })),
-              },
-            ]}
-            onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
-            onClear={() => setFilters({ status: "", role: "" })}
-            className="h-10 rounded-lg border-gray-300"
-          />
-          <Button
-            variant="emerald"
-            icon={Plus}
-            onClick={() => setModal({ type: "add", data: null })}
-            className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
-          >
-            ADD MEMBER
-          </Button>
-        </div>
-      </div>
 
-      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
-        <Table
-          columns={columns}
-          data={paginatedMembers}
-          loading={loading}
-          skipCard
-          variant="emerald"
-          emptyMessage="No members found"
+        <div className="overflow-hidden border border-gray-300 rounded-lg bg-white mb-4">
+          <div className="m-3 mt-3">
+            <Table
+              columns={columns}
+              data={paginatedMembers}
+              loading={loading}
+              skipCard
+              variant="emerald"
+              emptyMessage="No members found"
+            />
+          </div>
+        </div>
+        
+        <Pagination
+          currentPage={currentPage}
+          totalRecords={filteredMembers.length}
+          recordsPerPage={recordsPerPage}
+          onPageChange={setCurrentPage}
+          onRecordsPerPageChange={setRecordsPerPage}
         />
       </div>
-      <Pagination
-        currentPage={currentPage}
-        totalRecords={filteredMembers.length}
-        recordsPerPage={recordsPerPage}
-        onPageChange={setCurrentPage}
-        onRecordsPerPageChange={setRecordsPerPage}
-      />
 
 
       {/* Unified Add/Edit Modal */}
@@ -334,16 +324,17 @@ export default function CommitteeMembers() {
         title={`${modal.type === "edit" ? "Edit" : "Add"} Member`}
         footer={
           <div className="flex gap-3">
-            <button
+            <Button
+              variant="secondary"
               onClick={() => setModal({ type: null, data: null })}
-              className="px-6 py-2 rounded-xl text-[14px] font-bold text-slate-500 hover:bg-slate-100 transition-all border border-slate-200"
+              className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 transition-all shadow-sm"
             >
               Cancel
-            </button>
+            </Button>
             <Button
               variant="emerald"
               onClick={handleSave}
-              className="px-8 py-2 text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
             >
               {modal.type === "edit" ? "Update" : "Save"} Member
             </Button>

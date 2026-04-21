@@ -4,6 +4,7 @@ import { Edit2, Trash2, Eye, X, AlertTriangle } from 'lucide-react'
 import StatusToggle from '../../components/ui/StatusToggle'
 import CustomDropdown from '../../components/ui/CustomDropdown'
 import { useToast } from '../../components/ui/Toast'
+import ActionButtons from '../../components/ui/ActionButtons'
 
 const LOCATION_STORAGE_KEY = 'location_v_final_production'
 const MODAL_CLOSED_STATE = { isOpen: false, type: '', data: null }
@@ -492,31 +493,12 @@ const LocationTable = forwardRef(({
   }
 
   const actionButtons = (row) => (
-    <div className="flex items-center justify-center gap-2">
-      <button
-        onClick={() => openViewModal(row)}
-        className="w-9 h-9 flex items-center justify-center rounded-full text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200"
-        title="View"
-      >
-        <Eye size={16} strokeWidth={2} />
-      </button>
-
-      <button
-        onClick={() => openEditModal(row)}
-        className="w-9 h-9 flex items-center justify-center rounded-full text-slate-500 hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200"
-        title="Edit"
-      >
-        <Edit2 size={16} strokeWidth={2} />
-      </button>
-
-      <button
-        onClick={() => setDeleteConfirm({ show: true, id: row.id })}
-        className="w-9 h-9 flex items-center justify-center rounded-full text-slate-500 hover:bg-rose-50 hover:text-rose-600 transition-all duration-200"
-        title="Delete"
-      >
-        <Trash2 size={16} strokeWidth={2} />
-      </button>
-    </div>
+    <ActionButtons
+      onView={openViewModal}
+      onEdit={openEditModal}
+      onDelete={r => setDeleteConfirm({ show: true, id: r.id })}
+      row={row}
+    />
   )
 
   const tableColumns = useMemo(() => {

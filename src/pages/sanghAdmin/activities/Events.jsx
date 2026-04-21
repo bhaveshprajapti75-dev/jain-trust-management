@@ -18,6 +18,7 @@ import Input from '../../../components/ui/Input';
 import Pagination from '../../../components/ui/Pagination';
 import CustomDropdown from '../../../components/ui/CustomDropdown';
 import TimePicker from '../../../components/ui/TimePicker';
+import ActionButtons from '../../../components/ui/ActionButtons';
 
 // ── Tab config ──────────────────────────────────────────────────────────────
 const TABS = ['Event Details', 'Location & Venue', 'Organizer & Contact', 'Additional Info & Media'];
@@ -197,10 +198,10 @@ export default function Events() {
   }, [filteredCategories, currentPage, recordsPerPage]);
 
   const stats = useMemo(() => [
-    { title: 'TOTAL EVENTS', value: events.length, icon: CalendarDays, color: 'sky' },
-    { title: 'UPCOMING EVENTS', value: events.filter(e => e.eventStatus === 'Upcoming').length, icon: Clock, color: 'teal' },
-    { title: 'TOTAL ATTENDANCE', value: events.reduce((acc, e) => acc + (parseInt(e.confirmedAttendees) || 0), 0), icon: Users, color: 'amber' },
-    { title: 'COMPLETED EVENTS', value: events.filter(e => e.eventStatus === 'Completed').length, icon: Check, color: 'emerald' },
+    { title: 'Total Events', value: events.length, icon: CalendarDays, color: 'sky' },
+    { title: 'Upcoming Events', value: events.filter(e => e.eventStatus === 'Upcoming').length, icon: Clock, color: 'teal' },
+    { title: 'Total Attendance', value: events.reduce((acc, e) => acc + (parseInt(e.confirmedAttendees) || 0), 0), icon: Users, color: 'amber' },
+    { title: 'Completed Events', value: events.filter(e => e.eventStatus === 'Completed').length, icon: Check, color: 'emerald' },
   ], [events]);
 
   const openModal = (mode, item = null) => {
@@ -296,19 +297,19 @@ export default function Events() {
   const isView = modalMode === 'view';
 
   const eventColumns = [
-    { key: 'id', label: 'SR. NO', align: 'center', render: (_, __, i) => i + 1 },
-    { key: 'eventName', label: 'EVENT NAME', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
-    { key: 'eventType', label: 'EVENT TYPE', align: 'center', render: v => (
+    { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => i + 1 },
+    { key: 'eventName', label: 'Event Name', align: 'center', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
+    { key: 'eventType', label: 'Event Type', align: 'center', render: v => (
       <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider">{v}</span>
     )},
-    { key: 'location', label: 'LOCATION', render: (_, r) => (
-      <div className="flex flex-col">
+    { key: 'location', label: 'Location', align: 'center', render: (_, r) => (
+      <div className="flex flex-col items-center">
         <span className="text-slate-600 font-medium text-[12px]">{r.city || '—'}</span>
         <span className="text-[10px] text-slate-400">{r.district || ''}</span>
       </div>
     )},
-    { key: 'organizerName', label: 'ORGANIZER', render: v => <span className="text-slate-600 font-medium text-[12px]">{v || '—'}</span> },
-    { key: 'eventStatus', label: 'STATUS', align: 'center', render: v => {
+    { key: 'organizerName', label: 'Organizer', align: 'center', render: v => <span className="text-slate-600 font-medium text-[12px]">{v || '—'}</span> },
+    { key: 'eventStatus', label: 'Status', align: 'center', render: v => {
         const s = EVENT_STATUSES.find(st => st.value === v) || { label: v, color: 'slate' };
         let colorClasses = "bg-slate-100 text-slate-600";
         if (s.color === 'sky') colorClasses = "bg-sky-100 text-sky-600";
@@ -317,27 +318,29 @@ export default function Events() {
         if (s.color === 'emerald') colorClasses = "bg-emerald-100 text-emerald-600";
         return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${colorClasses}`}>{s.label}</span>;
     }},
-    { key: 'isPublished', label: 'PUBLISHED', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => togglePublished(r)} /> },
-    { key: 'actions', label: 'ACTIONS', align: 'center', render: (_, r) => (
-      <div className="flex items-center justify-center gap-2">
-        <button onClick={() => openModal('view', r)} className="w-8 h-8 flex items-center justify-center text-teal-500 bg-teal-50 hover:bg-teal-100 rounded-full transition-all"><Eye size={15} /></button>
-        <button onClick={() => openModal('edit', r)} className="w-8 h-8 flex items-center justify-center text-sky-500 bg-sky-50 hover:bg-sky-100 rounded-full transition-all border border-sky-100"><Pencil size={15} /></button>
-        <button onClick={() => { setItemToDelete(r); setIsDeleteModalOpen(true); }} className="w-8 h-8 flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-full transition-all border border-rose-100"><Trash2 size={15} /></button>
-      </div>
+    { key: 'isPublished', label: 'Published', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => togglePublished(r)} /> },
+    { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
+      <ActionButtons
+        onView={row => openModal('view', row)}
+        onEdit={row => openModal('edit', row)}
+        onDelete={row => { setItemToDelete(row); setIsDeleteModalOpen(true); }}
+        row={r}
+      />
     )}
   ];
 
   const categoryColumns = [
-    { key: 'id', label: 'SR. NO', align: 'center', render: (_, __, i) => i + 1 },
-    { key: 'categoryName', label: 'CATEGORY NAME', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
-    { key: 'description', label: 'DESCRIPTION', render: (v) => <span className="text-slate-500 text-[12px]">{v || '—'}</span> },
-    { key: 'isPublished', label: 'STATUS', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => toggleCategoryPublished(r)} /> },
-    { key: 'actions', label: 'ACTIONS', align: 'center', render: (_, r) => (
-      <div className="flex items-center justify-center gap-2">
-        <button onClick={() => openCategoryModal('view', r)} className="w-8 h-8 flex items-center justify-center text-teal-500 bg-teal-50 hover:bg-teal-100 rounded-full transition-all"><Eye size={15} /></button>
-        <button onClick={() => openCategoryModal('edit', r)} className="w-8 h-8 flex items-center justify-center text-sky-500 bg-sky-50 hover:bg-sky-100 rounded-full transition-all border border-sky-100"><Pencil size={15} /></button>
-        <button onClick={() => { setItemToDelete(r); setIsDeleteModalOpen(true); }} className="w-8 h-8 flex items-center justify-center text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-full transition-all border border-rose-100"><Trash2 size={15} /></button>
-      </div>
+    { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => i + 1 },
+    { key: 'categoryName', label: 'Category Name', align: 'center', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
+    { key: 'description', label: 'Description', align: 'center', render: (v) => <span className="text-slate-500 text-[12px]">{v || '—'}</span> },
+    { key: 'isPublished', label: 'Status', align: 'center', render: (v, r) => <StatusToggle status={v} onToggle={() => toggleCategoryPublished(r)} /> },
+    { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
+      <ActionButtons
+        onView={row => openCategoryModal('view', row)}
+        onEdit={row => openCategoryModal('edit', row)}
+        onDelete={row => { setItemToDelete(row); setIsDeleteModalOpen(true); }}
+        row={r}
+      />
     )}
   ];
 
@@ -383,18 +386,18 @@ export default function Events() {
     <div className="flex items-center gap-3">
       {!isView ? (
         <>
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={() => setIsModalOpen(false)}
-            className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 transition-all"
+            className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 transition-all shadow-sm"
           >
             Cancel
-          </button>
+          </Button>
           {activeTab < TABS.length - 1 ? (
             <Button
               variant="emerald"
-              onClick={() => setActiveTab(t => t + 1)}
-              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+              onClick={() => setActiveTab((t) => t + 1)}
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
             >
               Next
             </Button>
@@ -402,158 +405,167 @@ export default function Events() {
             <Button
               variant="emerald"
               onClick={handleSave}
-              className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
             >
               {currentItem ? "Update" : "Create"} Event
             </Button>
           )}
         </>
       ) : (
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={() => setIsModalOpen(false)}
-          className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 transition-all"
+          className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 shadow-sm"
         >
           Close
-        </button>
+        </Button>
       )}
     </div>
   );
 
   return (
     <CommonPageLayout title="Event Management" stats={stats}>
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-4">
-          <h2 className="text-[17px] font-bold text-slate-800 tracking-tight">Manage {activeSubmodule === 'event' ? 'Events' : 'Categories'}</h2>
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-4 mb-6 px-1">
+          <div className="flex items-center gap-2 bg-slate-100/80 p-1 rounded-xl border border-slate-200">
+            <button
+              onClick={() => {
+                setActiveSubmodule("category");
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "category" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Event Category
+            </button>
+            <button
+              onClick={() => {
+                setActiveSubmodule("event");
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "event" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+            >
+              Event
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2 bg-slate-100/80 p-1 rounded-xl border border-slate-200">
-          <button
-            onClick={() => {
-              setActiveSubmodule("category");
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "category" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
-          >
-            Event Category
-          </button>
-          <button
-            onClick={() => {
-              setActiveSubmodule("event");
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "event" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-500 hover:text-slate-700"}`}
-          >
-            Event
-          </button>
-        </div>
-      </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-        <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
-          <input
-            type="text"
-            value={activeSubmodule === "event" ? search : categorySearch}
-            onChange={(e) => (activeSubmodule === "event" ? setSearch(e.target.value) : setCategorySearch(e.target.value))}
-            placeholder={activeSubmodule === "event" ? "Search event name, code or city..." : "Search category name or description..."}
-            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
-          />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+            <input
+              type="text"
+              value={activeSubmodule === "event" ? search : categorySearch}
+              onChange={(e) => (activeSubmodule === "event" ? setSearch(e.target.value) : setCategorySearch(e.target.value))}
+              placeholder={activeSubmodule === "event" ? "Search event name, code or city..." : "Search category name or description..."}
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            {activeSubmodule === "event" ? (
+              <>
+                <FilterButton
+                  filters={filters}
+                  options={[
+                    {
+                      key: "eventType",
+                      placeholder: "Event Type",
+                      items: categories.map((c) => ({ label: c.categoryName, value: c.categoryName })),
+                    },
+                    {
+                      key: "eventStatus",
+                      placeholder: "Status",
+                      items: EVENT_STATUSES.map((s) => ({ label: s.label, value: s.value })),
+                    },
+                  ]}
+                  onChange={(k, v) => setFilters((p) => ({ ...p, [k]: v }))}
+                  onClear={() => setFilters({ eventType: "All", eventStatus: "All" })}
+                  dataCount={filteredData.length}
+                  className="h-10 rounded-lg border-gray-300"
+                />
+                <Button
+                  variant="emerald"
+                  icon={Plus}
+                  onClick={() => openModal("add")}
+                  className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+                >
+                  CREATE EVENT
+                </Button>
+              </>
+            ) : (
+              <>
+                <FilterButton
+                  filters={categoryFilters}
+                  options={[
+                    {
+                      key: "isPublished",
+                      placeholder: "Status",
+                      items: [
+                        { label: "Active", value: "Active" },
+                        { label: "Inactive", value: "Inactive" },
+                      ],
+                    },
+                  ]}
+                  onChange={(k, v) => setCategoryFilters((p) => ({ ...p, [k]: v }))}
+                  onClear={() => setCategoryFilters({ isPublished: "All" })}
+                  dataCount={filteredCategories.length}
+                  className="h-10 rounded-lg border-gray-300"
+                />
+                <Button
+                  variant="emerald"
+                  icon={Plus}
+                  onClick={() => openCategoryModal("add")}
+                  className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
+                >
+                  ADD CATEGORY
+                </Button>
+              </>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {activeSubmodule === "event" ? (
-            <>
-              <FilterButton
-                filters={filters}
-                options={[
-                  {
-                    key: "eventType",
-                    placeholder: "Event Type",
-                    items: categories.map((c) => ({ label: c.categoryName, value: c.categoryName })),
-                  },
-                  {
-                    key: "eventStatus",
-                    placeholder: "Status",
-                    items: EVENT_STATUSES.map((s) => ({ label: s.label, value: s.value })),
-                  },
-                ]}
-                onChange={(k, v) => setFilters((p) => ({ ...p, [k]: v }))}
-                onClear={() => setFilters({ eventType: "All", eventStatus: "All" })}
-                dataCount={filteredData.length}
-                className="h-10 rounded-lg border-gray-300"
-              />
-              <Button
-                variant="emerald"
-                icon={Plus}
-                onClick={() => openModal("add")}
-                className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
-              >
-                CREATE EVENT
-              </Button>
-            </>
-          ) : (
-            <>
-              <FilterButton
-                filters={categoryFilters}
-                options={[
-                  {
-                    key: "isPublished",
-                    placeholder: "Status",
-                    items: [
-                      { label: "Active", value: "Active" },
-                      { label: "Inactive", value: "Inactive" },
-                    ],
-                  },
-                ]}
-                onChange={(k, v) => setCategoryFilters((p) => ({ ...p, [k]: v }))}
-                onClear={() => setCategoryFilters({ isPublished: "All" })}
-                dataCount={filteredCategories.length}
-                className="h-10 rounded-lg border-gray-300"
-              />
-              <Button
-                variant="emerald"
-                icon={Plus}
-                onClick={() => openCategoryModal("add")}
-                className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
-              >
-                ADD CATEGORY
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
 
-      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
-        <Table
-          variant="emerald"
-          columns={columns}
-          data={activeSubmodule === "event" ? paginatedData : paginatedCategories}
-          loading={loading}
-          skipCard={true}
+        <div className="overflow-hidden border border-gray-300 bg-white mb-2 rounded-2xl">
+          <div className="m-3 mt-3">
+            <Table
+              variant="emerald"
+              columns={columns}
+              data={activeSubmodule === "event" ? paginatedData : paginatedCategories}
+              loading={loading}
+              skipCard={true}
+            />
+          </div>
+        </div>
+        
+        <Pagination 
+          currentPage={currentPage} 
+          totalRecords={activeSubmodule === 'event' ? filteredData.length : filteredCategories.length} 
+          recordsPerPage={recordsPerPage} 
+          onPageChange={setCurrentPage} 
+          onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} 
         />
       </div>
-      
-      <Pagination 
-        currentPage={currentPage} 
-        totalRecords={activeSubmodule === 'event' ? filteredData.length : filteredCategories.length} 
-        recordsPerPage={recordsPerPage} 
-        onPageChange={setCurrentPage} 
-        onRecordsPerPageChange={v => { setRecordsPerPage(v); setCurrentPage(1); }} 
-      />
 
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} size="xxl" title={modalHeader} footer={modalFooter}>
-        <div className="px-1 sm:px-2 py-2 grid min-h-[500px]">
-          <div className={`${activeTab === 0 ? 'block' : 'hidden'}`}>
-            <Tab1 formData={formData} set={set} isView={isView} onImageClick={setPreviewImage} categories={categories} />
-          </div>
-          <div className={`${activeTab === 1 ? 'block' : 'hidden'}`}>
-            <Tab2 formData={formData} set={set} isView={isView} />
-          </div>
-          <div className={`${activeTab === 2 ? 'block' : 'hidden'}`}>
-            <Tab3 formData={formData} set={set} isView={isView} />
-          </div>
-          <div className={`${activeTab === 3 ? 'block' : 'hidden'}`}>
-            <Tab4 formData={formData} set={set} isView={isView} />
-          </div>
+        <div className="px-1 sm:px-2 py-2 overflow-x-hidden">
+          {activeTab === 0 && (
+            <div className="animate-in fade-in duration-300">
+               <Tab1 formData={formData} set={set} isView={isView} onImageClick={setPreviewImage} categories={categories} />
+            </div>
+          )}
+          {activeTab === 1 && (
+            <div className="animate-in fade-in duration-300">
+               <Tab2 formData={formData} set={set} isView={isView} />
+            </div>
+          )}
+          {activeTab === 2 && (
+            <div className="animate-in fade-in duration-300">
+               <Tab3 formData={formData} set={set} isView={isView} />
+            </div>
+          )}
+          {activeTab === 3 && (
+            <div className="animate-in fade-in duration-300">
+               <Tab4 formData={formData} set={set} isView={isView} />
+            </div>
+          )}
         </div>
       </Modal>
 
@@ -570,11 +582,11 @@ export default function Events() {
           <div className="flex items-center gap-3">
             {modalMode !== 'view' ? (
               <>
-                <button onClick={() => setIsCategoryModalOpen(false)} className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 transition-all">Cancel</button>
-                <Button variant="emerald" onClick={handleCategorySave} className="w-36 h-[42px] shadow-lg shadow-emerald-900/10 font-bold text-[14px]">{modalMode === 'add' ? 'Submit' : 'Update'}</Button>
+                <button onClick={() => setIsCategoryModalOpen(false)} className="w-32 h-10 rounded-xl border border-slate-200 text-slate-500 font-bold text-[13px] hover:bg-slate-50 transition-all">Cancel</button>
+                <Button variant="emerald" onClick={handleCategorySave} className="w-32 h-10 shadow-lg shadow-emerald-900/10 font-bold text-[13px]">{modalMode === 'add' ? 'Submit' : 'Update'}</Button>
               </>
             ) : (
-              <button onClick={() => setIsCategoryModalOpen(false)} className="w-36 h-[42px] rounded-xl border border-slate-200 text-slate-500 font-bold text-[14px] hover:bg-slate-50 transition-all">Close</button>
+              <button onClick={() => setIsCategoryModalOpen(false)} className="w-32 h-10 rounded-xl border border-slate-200 text-slate-500 font-bold text-[13px] hover:bg-slate-50 transition-all">Close</button>
             )}
           </div>
         }

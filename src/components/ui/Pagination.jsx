@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
+import React from 'react'
+import CustomDropdown from './CustomDropdown'
 
 export default function Pagination({
   currentPage,
@@ -7,128 +7,124 @@ export default function Pagination({
   recordsPerPage,
   onPageChange,
   onRecordsPerPageChange,
+  rowsPerPageOptions = [10, 20, 30, 50, 100],
 }) {
-  const [isLimitOpen, setIsLimitOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const totalPages = Math.ceil(totalRecords / recordsPerPage)
+  const startRecord = (currentPage - 1) * recordsPerPage + 1
+  const endRecord = Math.min(currentPage * recordsPerPage, totalRecords)
 
-  const totalPages = Math.ceil(totalRecords / recordsPerPage);
-  const startRecord = (currentPage - 1) * recordsPerPage + 1;
-  const endRecord = Math.min(currentPage * recordsPerPage, totalRecords);
+  if (totalRecords === 0) return null
 
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
+  const handlePageChange = (page) => {
+    onPageChange(page)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  const limitOptions = [5, 10, 15, 20];
+  const getPageNumbers = () => {
+    const pages = []
+    const nums = new Set([1, totalPages])
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsLimitOpen(false);
-      }
+    // Show first few pages
+    for (let i = 1; i <= 3; i += 1) {
+      if (i <= totalPages) nums.add(i)
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+    // Show pages around current page
+    if (currentPage > 1 && currentPage < totalPages) {
+      nums.add(currentPage - 1)
+      nums.add(currentPage)
+      nums.add(currentPage + 1)
+    }
+
+    // Show last few pages
+    for (let i = totalPages - 2; i <= totalPages; i += 1) {
+      if (i > 0) nums.add(i)
+    }
+
+    const sorted = Array.from(nums)
+      .sort((a, b) => a - b)
+      .filter((n) => n > 0 && n <= totalPages)
+
+    let prev = null
+    for (const num of sorted) {
+      if (prev !== null && num - prev > 1) {
+        pages.push('...')
+      }
+      pages.push(num)
+      prev = num
+    }
+
+    return pages
+  }
 
   return (
-    <div className="px-4 py-3 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div className="flex items-center gap-2">
-        <span className="text-[13px] text-slate-500">Show</span>
-        <div className="relative" ref={dropdownRef}>
-          <button
-            onClick={() => setIsLimitOpen(!isLimitOpen)}
-            className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-3 h-[34px] text-[13px] font-medium text-slate-600 transition-all cursor-pointer min-w-[55px] justify-between"
-            style={{ backgroundColor: 'white' }}
-            onMouseEnter={(e) => e.currentTarget.style.borderColor = '#10b981'}
-            onMouseLeave={(e) => e.currentTarget.style.borderColor = '#e2e8f0'}
-          >
-            <span>{recordsPerPage}</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-          </button>
-
-          {isLimitOpen && (
-            <div className="absolute bottom-full left-0 mb-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg z-50 overflow-hidden">
-              {limitOptions.map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => {
-                    onRecordsPerPageChange(opt);
-                    setIsLimitOpen(false);
-                  }}
-                  className="w-full text-center py-2 text-[13px] font-medium transition-all text-slate-600"
-                  style={recordsPerPage === opt ? { backgroundColor: '#10b981', color: 'white' } : {}}
-                  onMouseEnter={(e) => {
-                    if (recordsPerPage !== opt) {
-                      e.currentTarget.style.backgroundColor = '#ecfdf5';
-                      e.currentTarget.style.color = '#059669';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (recordsPerPage !== opt) {
-                      e.currentTarget.style.backgroundColor = '';
-                      e.currentTarget.style.color = '#475569';
-                    }
-                  }}
-                >
-                  {opt}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        <span className="text-[13px] text-slate-500">entries</span>
+    <div className="flex items-center justify-between py-2 px-2 w-full">
+      {/* Left side: Records per page */}
+      <div className="flex-1 flex items-center gap-2">
+        <span className="text-[13px] text-slate-400 font-medium whitespace-nowrap">Showing</span>
+        <CustomDropdown
+          value={recordsPerPage}
+          onChange={(value) => {
+            onRecordsPerPageChange(Number(value))
+            handlePageChange(1)
+          }}
+          items={rowsPerPageOptions.map((option) => ({ label: String(option), value: option }))}
+          className="w-16"
+          triggerClassName="h-8 px-2 rounded-lg text-[13px] bg-slate-50/50 border-slate-200"
+          showSearch={false}
+        />
       </div>
 
-      <div className="text-[13px] text-slate-500 font-medium order-3 sm:order-2">
-        {totalRecords > 0 ? (
-          <>Showing {startRecord} to {endRecord} out of {totalRecords} records</>
-        ) : (
-          "No records found"
-        )}
+      {/* Center: Record Summary */}
+      <div className="flex-1 text-center text-[13px] text-slate-400 font-medium">
+        Showing {startRecord} to {endRecord} out of {totalRecords} records
       </div>
 
-      <div className="flex items-center gap-1 order-2 sm:order-3">
+      {/* Right side: Pagination controls */}
+      <div className="flex-1 flex justify-end items-center gap-1">
         <button
-          onClick={() => onPageChange(currentPage - 1)}
+          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-600 disabled:opacity-20 disabled:hover:text-slate-400 transition-colors"
           disabled={currentPage === 1}
-          className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
+          onClick={() => handlePageChange(currentPage - 1)}
+          title="Previous Page"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+          </svg>
         </button>
 
-        {pageNumbers.map((num) => (
-          <button
-            key={num}
-            onClick={() => onPageChange(num)}
-            className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-[13px] font-medium transition-all border border-slate-200"
-            style={currentPage === num ? { backgroundColor: '#10b981', color: 'white' } : { color: '#475569' }}
-            onMouseEnter={(e) => {
-              if (currentPage !== num) {
-                e.currentTarget.style.backgroundColor = '#ecfdf5';
-                e.currentTarget.style.color = '#059669';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (currentPage !== num) {
-                e.currentTarget.style.backgroundColor = '';
-                e.currentTarget.style.color = '#475569';
-              }
-            }}
-          >
-            {num}
-          </button>
-        ))}
+        <div className="flex items-center gap-0.5">
+          {getPageNumbers().map((page, index) => (
+            <React.Fragment key={`${page}-${index}`}>
+              {page === '...' ? (
+                <span className="w-8 h-8 flex items-center justify-center text-slate-400 text-[13px]">...</span>
+              ) : (
+                <button
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all text-[13px] font-semibold ${
+                    currentPage === page
+                      ? 'bg-emerald-50 text-emerald-600'
+                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                  }`}
+                  onClick={() => handlePageChange(page)}
+                >
+                  {page}
+                </button>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
 
         <button
-          onClick={() => onPageChange(currentPage + 1)}
+          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-emerald-600 disabled:opacity-20 disabled:hover:text-slate-400 transition-colors"
           disabled={currentPage === totalPages}
-          className="w-[34px] h-[34px] flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-50 border border-slate-200 disabled:opacity-30 transition-all"
+          onClick={() => handlePageChange(currentPage + 1)}
+          title="Next Page"
         >
-          <ChevronRight className="w-4 h-4" />
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+          </svg>
         </button>
       </div>
     </div>
-  );
-}
+  )
+}

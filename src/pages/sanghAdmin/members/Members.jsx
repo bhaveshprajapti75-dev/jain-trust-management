@@ -35,8 +35,9 @@ import Input from "../../../components/ui/Input";
 import Button from "../../../components/ui/Button";
 import ConfirmModal from "../../../components/ui/ConfirmModal";
 import DatePicker from "../../../components/ui/DatePicker";
-import { useToast } from "../../../components/ui/Toast";
 import StatusToggle from "../../../components/ui/StatusToggle";
+import { useToast } from "../../../components/ui/Toast";
+import ActionButtons from "../../../components/ui/ActionButtons";
 import { memberService } from "../../../services/memberService";
 
 // ── Initial State Constants ──────────────────────────────────────────────────
@@ -428,11 +429,12 @@ export default function Members() {
   }, [filteredData, currentPage, recordsPerPage]);
 
   const actionRender = (_, r) => (
-    <div className="flex gap-2 justify-center">
-      <button onClick={() => openModal("view", r)} className="p-1.5 rounded-xl bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white transition-all"><Eye className="w-4 h-4" /></button>
-      <button onClick={() => openModal("edit", r)} className="p-1.5 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white transition-all"><Edit className="w-4 h-4" /></button>
-      <button onClick={() => openModal("delete", r)} className="p-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"><Trash2 className="w-4 h-4" /></button>
-    </div>
+    <ActionButtons
+      onView={() => openModal("view", r)}
+      onEdit={() => openModal("edit", r)}
+      onDelete={() => openModal("delete", r)}
+      row={r}
+    />
   );
 
   const statusRender = (s, row) => (
@@ -440,7 +442,7 @@ export default function Members() {
   );
 
   const columns = [
-    { key: "sr_no", label: "Sr. No", align: "center", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
+    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
     { key: "name", label: "Name", align: "center", render: (v) => <span className="font-bold text-teal-700">{v}</span> },
     { key: "family_category", label: "Category", align: "center" },
     { key: "role", label: "Relationship", align: "center", render: (v, r) => r?.is_family_head ? <span className="text-teal-600 font-bold">Head</span> : v },
@@ -450,7 +452,9 @@ export default function Members() {
       label: "Volunteer Status",
       align: "center",
       render: (v, r) => (
-        <StatusToggle status={v} onToggle={() => updateVolunteerStatus(r?.id, v)} />
+        <div className="flex justify-center">
+          <StatusToggle status={v} onToggle={() => updateVolunteerStatus(r?.id, v)} />
+        </div>
       )
     }] : []),
     { key: "status", label: "Status", align: "center", render: statusRender },
@@ -458,21 +462,23 @@ export default function Members() {
   ];
 
   const familyColumns = [
-    { key: "sr_no", label: "Sr. No", align: "center", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
+    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
     { key: "category", label: "Family Category Name", align: "center", render: (v) => <span className="font-bold text-teal-700">{v}</span> },
     { 
       key: "status", 
       label: "Status", 
       align: "center", 
       render: (v, r) => (
-        <StatusToggle 
-          status={r.status === "Active"} 
-          onToggle={() => {
-            const next = r.status === "Active" ? "Inactive" : "Active";
-            setFamilyCategories(prev => prev.map(c => c.id === r.id ? { ...c, status: next } : c));
-            showToast(`Category marked as ${next}`, "success");
-          }} 
-        />
+        <div className="flex justify-center">
+          <StatusToggle 
+            status={r.status === "Active"} 
+            onToggle={() => {
+              const next = r.status === "Active" ? "Inactive" : "Active";
+              setFamilyCategories(prev => prev.map(c => c.id === r.id ? { ...c, status: next } : c));
+              showToast(`Category marked as ${next}`, "success");
+            }} 
+          />
+        </div>
       )
     },
     { 
@@ -480,16 +486,12 @@ export default function Members() {
       label: "Action", 
       align: "center", 
       render: (_, r) => (
-        <div className="flex gap-2 justify-center">
-          <button onClick={() => openModal("viewCategory", r)} className="p-1.5 rounded-xl bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white transition-all"><Eye className="w-4 h-4" /></button>
-          <button onClick={() => openModal("editCategory", r)} className="p-1.5 rounded-xl bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white transition-all"><Edit className="w-4 h-4" /></button>
-          <button 
-            onClick={() => setModal({ type: 'deleteCategory', data: r })} 
-            className="p-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
+        <ActionButtons
+          onView={() => openModal("viewCategory", r)}
+          onEdit={() => openModal("editCategory", r)}
+          onDelete={() => setModal({ type: 'deleteCategory', data: r })}
+          row={r}
+        />
       ) 
     },
   ];
@@ -514,81 +516,100 @@ export default function Members() {
         ))}
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-        <div className="w-full sm:max-w-sm relative group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={`Search members...`}
-            className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
-          />
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`Search members...`}
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+            />
+          </div>
+          <div className="flex gap-2">
+            <FilterButton
+              dataCount={filteredData.length}
+              filters={filters}
+              options={[
+                {
+                  key: "status",
+                  placeholder: "Status",
+                  items: [
+                    { label: "Active", value: "Active" },
+                    { label: "Inactive", value: "Inactive" },
+                  ],
+                },
+                {
+                  key: "family_category",
+                  placeholder: "Family Category",
+                  items: familyCategories.map((cat) => ({
+                    label: cat.category,
+                    value: cat.category,
+                  })),
+                },
+                {
+                  key: "role",
+                  placeholder: "Position",
+                  items: [...new Set(individualMembers.map(m => m.role).filter(Boolean))].map(r => ({ label: r, value: r })),
+                },
+                {
+                  key: "is_volunteer",
+                  placeholder: "Volunteer",
+                  items: [
+                    { label: "Yes", value: "Yes" },
+                    { label: "No", value: "No" },
+                  ],
+                },
+              ].filter(opt => {
+                if (activeTab === "Volunteers") return opt.key === "status";
+                if (activeTab === "Family" || activeTab === "Member") {
+                  return opt.key === "status" || opt.key === "family_category";
+                }
+                return true;
+              })}
+              onChange={(k, v) => {
+                setFilters((f) => ({ ...f, [k]: v }));
+                setCurrentPage(1);
+              }}
+              onClear={() => {
+                setFilters({ status: "", family_category: "", is_volunteer: "", role: "" });
+                setCurrentPage(1);
+              }}
+              className="h-10 rounded-lg border-gray-300"
+            />
+            {activeTab === "Family" && (
+              <Button variant="emerald" icon={Plus} onClick={() => openModal("addCategory")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">FAMILY CATEGORY</Button>
+            )}
+            {activeTab === "Member" && (
+              <Button variant="emerald" icon={Plus} onClick={() => openModal("add")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">ADD MEMBER</Button>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
-          <FilterButton
-            dataCount={filteredData.length}
-            filters={filters}
-            options={[
-              {
-                key: "status",
-                placeholder: "Status",
-                items: [
-                  { label: "Active", value: "Active" },
-                  { label: "Inactive", value: "Inactive" },
-                ],
-              },
-              {
-                key: "family_category",
-                placeholder: "Family Category",
-                items: familyCategories.map((cat) => ({
-                  label: cat.category,
-                  value: cat.category,
-                })),
-              },
-              {
-                key: "role",
-                placeholder: "Position",
-                items: [...new Set(individualMembers.map(m => m.role).filter(Boolean))].map(r => ({ label: r, value: r })),
-              },
-              {
-                key: "is_volunteer",
-                placeholder: "Volunteer",
-                items: [
-                  { label: "Yes", value: "Yes" },
-                  { label: "No", value: "No" },
-                ],
-              },
-            ].filter(opt => {
-              if (activeTab === "Volunteers") return opt.key === "status";
-              if (activeTab === "Family" || activeTab === "Member") {
-                return opt.key === "status" || opt.key === "family_category";
-              }
-              return true;
-            })}
-            onChange={(k, v) => {
-              setFilters((f) => ({ ...f, [k]: v }));
-              setCurrentPage(1);
-            }}
-            onClear={() => {
-              setFilters({ status: "", family_category: "", is_volunteer: "", role: "" });
-              setCurrentPage(1);
-            }}
-            className="h-10 rounded-lg border-gray-300"
-          />
-          {activeTab === "Family" && (
-            <Button variant="emerald" icon={Plus} onClick={() => openModal("addCategory")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">FAMILY CATEGORY</Button>
-          )}
-          {activeTab === "Member" && (
-            <Button variant="emerald" icon={Plus} onClick={() => openModal("add")} className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10">ADD MEMBER</Button>
-          )}
-        </div>
-      </div>
 
-      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
-        <Table variant="emerald" columns={activeTab === "Family" ? familyColumns : columns} data={activeTab === "Family" ? familyCategories : paginatedData} loading={activeTab === "Family" ? false : loading} skipCard />
+        <div className="overflow-hidden border border-gray-300 bg-white mb-2 rounded-2xl">
+          <div className="m-3 mt-3">
+            <Table 
+              variant="emerald" 
+              columns={activeTab === "Family" ? familyColumns : columns} 
+              data={activeTab === "Family" ? familyCategories : paginatedData} 
+              loading={activeTab === "Family" ? false : loading} 
+              skipCard 
+            />
+          </div>
+        </div>
+
+        <div className="mt-0">
+          <Pagination 
+            currentPage={currentPage} 
+            totalRecords={activeTab === "Family" ? familyCategories.length : filteredData.length} 
+            recordsPerPage={recordsPerPage} 
+            onPageChange={setCurrentPage} 
+            onRecordsPerPageChange={setRecordsPerPage} 
+          />
+        </div>
       </div>
-      <Pagination currentPage={currentPage} totalRecords={activeTab === "Family" ? familyCategories.length : filteredData.length} recordsPerPage={recordsPerPage} onPageChange={setCurrentPage} onRecordsPerPageChange={setRecordsPerPage} />
 
       {/* ═══ Add/Edit/View Category Modal ═══ */}
       <Modal isOpen={modal.type === "addCategory" || modal.type === "editCategory" || modal.type === "viewCategory"} onClose={() => setModal({ type: null, data: null })} title={modal.type === "viewCategory" ? "View Family Category" : modal.type === "editCategory" ? "Edit Family Category" : "Add Family Category"} size="sm">
@@ -666,19 +687,19 @@ export default function Members() {
         }
         footer={
            <div className="flex items-center gap-3">
-             <button
-               type="button"
+             <Button
+               variant={modal.type === 'view' ? 'emerald' : 'secondary'}
                onClick={() => setModal({ type: null, data: null })}
-               className={`w-36 h-[42px] rounded-xl border border-slate-200 ${modal.type === 'view' ? 'bg-[#10b981] text-white border-[#10b981]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'} font-bold text-[14px] transition-all`}
+               className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200"
              >
                {modal.type === 'view' ? 'Close' : 'Cancel'}
-             </button>
+             </Button>
              {modal.type !== "view" && (
                <>
                  {activeModalTab < MEMBER_TABS.length - 1 ? (
                     <Button
                       variant="emerald"
-                      className="w-36 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+                      className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
                       onClick={() => setActiveModalTab(t => t + 1)}
                     >
                       Next Step
@@ -688,7 +709,7 @@ export default function Members() {
                       variant="emerald"
                       onClick={handleSave}
                       disabled={saving}
-                      className="w-40 h-[42px] text-[14px] font-bold shadow-lg shadow-emerald-900/10"
+                      className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
                     >
                       {saving ? "Saving..." : (modal.type === "add" ? "Submit" : "Update")}
                     </Button>
@@ -698,103 +719,109 @@ export default function Members() {
            </div>
         }
       >
-        <div className="px-1 sm:px-2 py-4 grid overflow-x-hidden">
+        <div className="px-1 sm:px-2 py-4 overflow-x-hidden">
             {/* Tab 0: Personal Information */}
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeModalTab === 0 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none'}`}>
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <Input label="Full Name" {...field("name")} icon={Users} error={errors.name} required disabled={modal.type === 'view'} placeholder="Enter full name..." />
-                  <Input label="Mobile" {...field("mobile")} icon={Phone} error={errors.mobile} disabled={modal.type === 'view'} placeholder="10-digit mobile number..." />
-                  <Input label="Email" {...field("email")} icon={Mail} disabled={modal.type === 'view'} placeholder="member@example.com" />
-                  <DatePicker label="Birth Date" value={formData?.birthDate} onChange={v => setFormData(p => ({ ...p, birthDate: v.target.value }))} icon={Calendar} disabled={modal.type === 'view'} />
-                  <CustomSelect label="Relationship" value={formData.role} options={["Head", "Husband", "Wife", "Son", "Daughter", "Father", "Mother", "Other"]} onChange={v => setFormData(p => ({ ...p, role: v }))} placeholder="Select relationship" disabled={modal.type === 'view'} />
-                  <CustomSelect label="Family Category" value={formData.family_category} options={familyCategories.map(c => c.category)} onChange={v => setFormData(p => ({ ...p, family_category: v }))} placeholder="Select Family Category" disabled={modal.type === 'view'} />
-                  <CustomSelect label="Gender" value={formData.gender} options={["Male", "Female", "Other"]} onChange={v => setFormData(p => ({ ...p, gender: v }))} placeholder="Select Gender" disabled={modal.type === 'view'} />
-                  <CustomSelect label="Blood Group" value={formData.blood_group} options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]} onChange={v => setFormData(p => ({ ...p, blood_group: v }))} placeholder="Select Blood Group" disabled={modal.type === 'view'} />
-                </div>
-                <div className="mt-6 flex gap-6 p-4 rounded-xl bg-slate-50 border border-slate-100">
-                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={formData.is_family_head} onChange={e => setFormData(p => ({ ...p, is_family_head: e.target.checked }))} disabled={modal.type === 'view'} className="w-4 h-4 rounded text-teal-600" /> <span className="text-[12px] font-bold text-slate-700 underline underline-offset-4 decoration-teal-200">Family Head?</span></label>
-                  <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={formData.is_volunteer} onChange={e => setFormData(p => ({ ...p, is_volunteer: e.target.checked }))} disabled={modal.type === 'view'} className="w-4 h-4 rounded text-emerald-600" /> <span className="text-[12px] font-bold text-slate-700 underline underline-offset-4 decoration-emerald-200">Volunteer?</span></label>
+            {activeModalTab === 0 && (
+              <div className="animate-in fade-in duration-300">
+                <div className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <Input label="Full Name" {...field("name")} icon={Users} error={errors.name} required disabled={modal.type === 'view'} placeholder="Enter full name..." />
+                    <Input label="Mobile" {...field("mobile")} icon={Phone} error={errors.mobile} disabled={modal.type === 'view'} placeholder="10-digit mobile number..." />
+                    <Input label="Email" {...field("email")} icon={Mail} disabled={modal.type === 'view'} placeholder="member@example.com" />
+                    <DatePicker label="Birth Date" value={formData?.birthDate} onChange={v => setFormData(p => ({ ...p, birthDate: v.target.value }))} icon={Calendar} disabled={modal.type === 'view'} />
+                    <CustomSelect label="Relationship" value={formData.role} options={["Head", "Husband", "Wife", "Son", "Daughter", "Father", "Mother", "Other"]} onChange={v => setFormData(p => ({ ...p, role: v }))} placeholder="Select relationship" disabled={modal.type === 'view'} />
+                    <CustomSelect label="Family Category" value={formData.family_category} options={familyCategories.map(c => c.category)} onChange={v => setFormData(p => ({ ...p, family_category: v }))} placeholder="Select Family Category" disabled={modal.type === 'view'} />
+                    <CustomSelect label="Gender" value={formData.gender} options={["Male", "Female", "Other"]} onChange={v => setFormData(p => ({ ...p, gender: v }))} placeholder="Select Gender" disabled={modal.type === 'view'} />
+                    <CustomSelect label="Blood Group" value={formData.blood_group} options={["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]} onChange={v => setFormData(p => ({ ...p, blood_group: v }))} placeholder="Select Blood Group" disabled={modal.type === 'view'} />
+                  </div>
+                  <div className="mt-6 flex gap-6 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={formData.is_family_head} onChange={e => setFormData(p => ({ ...p, is_family_head: e.target.checked }))} disabled={modal.type === 'view'} className="w-4 h-4 rounded text-teal-600" /> <span className="text-[12px] font-bold text-slate-700 underline underline-offset-4 decoration-teal-200">Family Head?</span></label>
+                    <label className="flex items-center gap-2 cursor-pointer"><input type="checkbox" checked={formData.is_volunteer} onChange={e => setFormData(p => ({ ...p, is_volunteer: e.target.checked }))} disabled={modal.type === 'view'} className="w-4 h-4 rounded text-emerald-600" /> <span className="text-[12px] font-bold text-slate-700 underline underline-offset-4 decoration-emerald-200">Volunteer?</span></label>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Tab 1: Family Member */}
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeModalTab === 1 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none'}`}>
-              <div className="space-y-6">
-                {/* Existing Family Members */}
-                {modal.type !== 'add' && individualMembers.filter(m => m.familyId === formData.familyId && m.id !== formData.id).map((m, i) => (
-                  <div key={`existing-${i}`} className="p-5 rounded-2xl border border-slate-100 bg-slate-50/50 relative group/entry animate-in slide-in-from-right duration-300">
-                     <div className="flex items-center justify-between mb-4">
+            {activeModalTab === 1 && (
+              <div className="animate-in fade-in duration-300">
+                <div className="space-y-6">
+                  {/* Existing Family Members */}
+                  {modal.type !== 'add' && individualMembers.filter(m => m.familyId === formData.familyId && m.id !== formData.id).map((m, i) => (
+                    <div key={`existing-${i}`} className="p-5 rounded-2xl border border-slate-100 bg-slate-50/50 relative group/entry animate-in slide-in-from-right duration-300">
+                      <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center text-[11px] font-bold">{i + 1}</div>
+                            <h4 className="text-[13px] font-bold text-slate-700">Existing Family Member</h4>
+                          </div>
+                          <div className={`px-3 py-1 rounded-full text-[10px] font-bold ${m.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                            {m.status}
+                          </div>
+                      </div>
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600">
+                              <Users className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="text-[14px] font-bold text-slate-800">{m.name}</p>
+                              <p className="text-[12px] font-medium text-slate-500">{m.role} • {m.mobile || 'No Mobile'}</p>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                  ))}
+
+                  {/* New Family Members to be added */}
+                  {membersList.map((m, i) => (
+                    <div key={`new-${i}`} className="p-5 rounded-2xl border border-teal-100 bg-teal-50/30 relative group/entry animate-in slide-in-from-right duration-300">
+                      <div className="flex items-center justify-between mb-5">
                         <div className="flex items-center gap-3">
-                          <div className="w-7 h-7 rounded-lg bg-slate-200 text-slate-500 flex items-center justify-center text-[11px] font-bold">{i + 1}</div>
-                          <h4 className="text-[13px] font-bold text-slate-700">Existing Family Member</h4>
+                          <div className="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-[11px] font-bold">{i + 1}</div>
+                          <h4 className="text-[13px] font-bold text-teal-700">New Family Entry</h4>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-[10px] font-bold ${m.status === 'Active' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
-                          {m.status}
-                        </div>
-                     </div>
-                     <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 shadow-sm">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-600">
-                             <Users className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="text-[14px] font-bold text-slate-800">{m.name}</p>
-                            <p className="text-[12px] font-medium text-slate-500">{m.role} • {m.mobile || 'No Mobile'}</p>
-                          </div>
-                        </div>
+                        <button type="button" onClick={() => setMembersList(prev => prev.filter((_, idx) => idx !== i))} className="p-1 px-3 rounded-lg text-[11px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">Remove</button>
                       </div>
-                  </div>
-                ))}
-
-                {/* New Family Members to be added */}
-                {membersList.map((m, i) => (
-                  <div key={`new-${i}`} className="p-5 rounded-2xl border border-teal-100 bg-teal-50/30 relative group/entry animate-in slide-in-from-right duration-300">
-                    <div className="flex items-center justify-between mb-5">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-[11px] font-bold">{i + 1}</div>
-                        <h4 className="text-[13px] font-bold text-teal-700">New Family Entry</h4>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <Input label="Name" value={m.name} onChange={e => { const list = [...membersList]; list[i].name = e.target.value; setMembersList(list); }} placeholder="Full Name" />
+                        <Input label="Mobile" value={m.mobile} onChange={e => { const list = [...membersList]; list[i].mobile = e.target.value; setMembersList(list); }} placeholder="Mobile Number" />
+                        <CustomSelect label="Relationship" value={m.role} options={["Husband", "Wife", "Son", "Daughter", "Father", "Mother", "Other"]} onChange={v => { const list = [...membersList]; list[i].role = v; setMembersList(list); }} placeholder="Select relationship" />
+                        <CustomSelect label="Gender" value={m.gender} options={["Male", "Female", "Other"]} onChange={v => { const list = [...membersList]; list[i].gender = v; setMembersList(list); }} placeholder="Select Gender" />
                       </div>
-                      <button type="button" onClick={() => setMembersList(prev => prev.filter((_, idx) => idx !== i))} className="p-1 px-3 rounded-lg text-[11px] font-bold text-rose-500 hover:bg-rose-50 transition-colors">Remove</button>
                     </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <Input label="Name" value={m.name} onChange={e => { const list = [...membersList]; list[i].name = e.target.value; setMembersList(list); }} placeholder="Full Name" />
-                      <Input label="Mobile" value={m.mobile} onChange={e => { const list = [...membersList]; list[i].mobile = e.target.value; setMembersList(list); }} placeholder="Mobile Number" />
-                      <CustomSelect label="Relationship" value={m.role} options={["Husband", "Wife", "Son", "Daughter", "Father", "Mother", "Other"]} onChange={v => { const list = [...membersList]; list[i].role = v; setMembersList(list); }} placeholder="Select relationship" />
-                      <CustomSelect label="Gender" value={m.gender} options={["Male", "Female", "Other"]} onChange={v => { const list = [...membersList]; list[i].gender = v; setMembersList(list); }} placeholder="Select Gender" />
-                    </div>
-                  </div>
-                ))}
+                  ))}
 
-                {modal.type !== "view" && (
-                  <button type="button" onClick={() => setMembersList([...membersList, BLANK_MEMBER_ENTRY()])} className="w-full py-4 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/30 transition-all font-bold text-[13px] flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add Another Family Member</button>
-                )}
-                
-                {modal.type !== "add" && membersList.length === 0 && individualMembers.filter(m => m.familyId === formData.familyId && m.id !== formData.id).length === 0 && (
-                  <div className="py-12 flex flex-col items-center justify-center text-center px-6 rounded-2xl border-2 border-dashed border-slate-100">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 mb-3">
-                      <Users className="w-6 h-6" />
+                  {modal.type !== "view" && (
+                    <button type="button" onClick={() => setMembersList([...membersList, BLANK_MEMBER_ENTRY()])} className="w-full py-4 rounded-2xl border-2 border-dashed border-slate-200 text-slate-400 hover:border-teal-300 hover:text-teal-600 hover:bg-teal-50/30 transition-all font-bold text-[13px] flex items-center justify-center gap-2"><Plus className="w-4 h-4" /> Add Another Family Member</button>
+                  )}
+                  
+                  {modal.type !== "add" && membersList.length === 0 && individualMembers.filter(m => m.familyId === formData.familyId && m.id !== formData.id).length === 0 && (
+                    <div className="py-12 flex flex-col items-center justify-center text-center px-6 rounded-2xl border-2 border-dashed border-slate-100">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-300 mb-3">
+                        <Users className="w-6 h-6" />
+                      </div>
+                      <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Independent Entry</p>
+                      <p className="text-xs text-slate-400 mt-1">This member does not have other family members linked.</p>
                     </div>
-                    <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Independent Entry</p>
-                    <p className="text-xs text-slate-400 mt-1">This member does not have other family members linked.</p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Tab 2: Location */}
-            <div className={`col-start-1 row-start-1 transition-opacity duration-300 ${activeModalTab === 2 ? 'opacity-100 z-10' : 'opacity-0 -z-10 pointer-events-none'}`}>
-               <div className="space-y-4">
-                 <Input label="Complete Address" {...field("address")} icon={MapIcon} placeholder="House/Flat No, Apartment, Street..." disabled={modal.type === 'view'} />
-                 <div className="grid grid-cols-2 gap-4">
-                   <Input label="Area" {...field("area")} icon={MapPin} placeholder="e.g. Navrangpura" disabled={modal.type === 'view'} />
-                   <Input label="City" {...field("city")} icon={MapPin} placeholder="e.g. Ahmedabad" disabled={modal.type === 'view'} />
-                   <Input label="Pincode" {...field("pincode")} icon={MapPin} placeholder="6-digit pincode" disabled={modal.type === 'view'} />
-                 </div>
-                 <p className="text-xs text-slate-400 mt-2 ml-1">Provide detailed address information for the member or family unit.</p>
-               </div>
-            </div>
+            {activeModalTab === 2 && (
+              <div className="animate-in fade-in duration-300">
+                <div className="space-y-4">
+                  <Input label="Complete Address" {...field("address")} icon={MapIcon} placeholder="House/Flat No, Apartment, Street..." disabled={modal.type === 'view'} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input label="Area" {...field("area")} icon={MapPin} placeholder="e.g. Navrangpura" disabled={modal.type === 'view'} />
+                    <Input label="City" {...field("city")} icon={MapPin} placeholder="e.g. Ahmedabad" disabled={modal.type === 'view'} />
+                    <Input label="Pincode" {...field("pincode")} icon={MapPin} placeholder="6-digit pincode" disabled={modal.type === 'view'} />
+                  </div>
+                  <p className="text-xs text-slate-400 mt-2 ml-1">Provide detailed address information for the member or family unit.</p>
+                </div>
+              </div>
+            )}
           </div>
       </Modal>
 

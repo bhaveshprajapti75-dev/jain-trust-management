@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Landmark, Eye, Trash2, CheckCircle2, Search } from "lucide-react";
+import ActionButtons from "../../../components/ui/ActionButtons";
 import CommonPageLayout from "../../../components/ui/CommonPageLayout";
 import Table from "../../../components/ui/Table";
 import Button from "../../../components/ui/Button";
@@ -105,23 +106,28 @@ export default function LinkedTrusts() {
   const columns = [
     {
       key: "sr_no",
-      label: "Sr. No",
+      label: "Sr. No.",
+      align: 'left',
       render: (_, __, i) => (
-        <span className="text-slate-500 font-semibold">{i + 1}</span>
+        <span className="text-slate-500 font-semibold">
+          {(currentPage - 1) * recordsPerPage + i + 1}
+        </span>
       ),
     },
     {
       key: "name",
       label: "Trust Name",
-      render: (name) => <span className="font-bold text-emerald-700">{name}</span>,
+      align: 'center',
+      render: (name) => <span className="font-bold text-teal-700">{name}</span>,
     },
-    { key: "category", label: "Category" },
-    { key: "phone", label: "Phone" },
+    { key: "category", label: "Category", align: 'center' },
+    { key: "phone", label: "Phone", align: 'center' },
     {
       key: "status",
       label: "Status",
+      align: 'center',
       render: (status, row) => (
-        <div className="flex items-center min-w-[60px]">
+        <div className="flex items-center justify-center min-w-[60px]">
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -140,22 +146,11 @@ export default function LinkedTrusts() {
       key: "actions",
       label: "Action",
       render: (_, row) => (
-        <div className="flex items-center gap-2">
-          <button
-            className="p-1.5 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
-            title="View Details"
-            onClick={() => setViewModal({ open: true, data: row })}
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button
-            className="p-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all shadow-sm"
-            title="Remove Trust"
-            onClick={() => setDeleteModal({ open: true, id: row.id })}
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
+        <ActionButtons
+          onView={r => setViewModal({ open: true, data: r })}
+          onDelete={r => setDeleteModal({ open: true, id: r.id })}
+          row={row}
+        />
       ),
     },
   ];
@@ -188,50 +183,54 @@ export default function LinkedTrusts() {
 
   return (
     <CommonPageLayout title="Linked Trusts" stats={stats}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div className="w-full sm:max-w-sm">
-          <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by trust name..."
-              className="w-full h-10 pl-11 pr-10 rounded-lg border border-gray-300 bg-white text-[13px] font-medium text-slate-700 placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-50 outline-none transition-all duration-200 shadow-sm"
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm">
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by trust name..."
+                className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <FilterButton
+              dataCount={filteredTrusts.length}
+              filters={filters}
+              options={filterOptions}
+              onChange={handleFilterChange}
+              onClear={clearFilters}
+              className="h-10 rounded-lg border-gray-300"
             />
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <FilterButton
-            dataCount={filteredTrusts.length}
-            filters={filters}
-            options={filterOptions}
-            onChange={handleFilterChange}
-            onClear={clearFilters}
-            className="h-10 rounded-lg border-gray-300"
-          />
-        </div>
-      </div>
 
-      <div className="overflow-hidden border border-gray-300 bg-white p-3 mb-4 rounded-2xl">
-        <Table
-          variant="emerald"
-          columns={columns}
-          data={paginatedTrusts}
-          loading={loading}
-          skipCard
-          emptyMessage="No linked trusts found"
-          emptyDescription="Try adjusting your search or add new trusts."
+        <div className="overflow-hidden border border-gray-300 rounded-lg bg-white mb-4">
+          <div className="m-3 mt-3">
+            <Table
+              variant="emerald"
+              columns={columns}
+              data={paginatedTrusts}
+              loading={loading}
+              skipCard
+              emptyMessage="No linked trusts found"
+              emptyDescription="Try adjusting your search or add new trusts."
+            />
+          </div>
+        </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalRecords={filteredTrusts.length}
+          recordsPerPage={recordsPerPage}
+          onPageChange={setCurrentPage}
+          onRecordsPerPageChange={setRecordsPerPage}
         />
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalRecords={filteredTrusts.length}
-        recordsPerPage={recordsPerPage}
-        onPageChange={setCurrentPage}
-        onRecordsPerPageChange={setRecordsPerPage}
-      />
 
 
       {/* Delete Confirmation Modal */}

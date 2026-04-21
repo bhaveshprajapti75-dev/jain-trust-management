@@ -132,27 +132,27 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
   const content = (
     <div className="flex flex-col h-full bg-white select-none">
       {isMobile && (
-        <div className="px-5 py-4 flex justify-between items-center">
-          <span className="font-bold text-teal-700">MENU</span>
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500">
-            <X className="w-5 h-5" />
+        <div className="h-12 flex items-center justify-end px-3 border-b border-slate-200 shrink-0">
+          <button onClick={onClose} className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-full">
+            <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       
-      <nav className={`flex-1 overflow-y-auto px-3 ${isMobile ? 'py-4' : 'pt-7 pb-4'} space-y-3 custom-scrollbar`}>
+      <nav className={`flex-1 px-4 ${isMobile ? 'py-4' : 'py-6'} overflow-y-auto
+        scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden space-y-1`}>
         
         {/* Dashboard & Notifications (or Top Flat Items) */}
         {topFlatItems.map((item) => {
           const active = isRouteActive(pathname, item.to)
           return (
             <NavLink key={item.to} to={item.to} onClick={isMobile ? onClose : undefined} className="block group">
-              <div className={`relative flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 transform active:scale-95
-                ${active ? 'bg-teal-50 text-teal-700 shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-teal-600'}
-                ${!showLabels ? 'justify-center' : 'gap-3'}`}>
-                <item.icon className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-teal-600' : 'text-slate-400 group-hover:text-teal-500'}`} />
-                {showLabels && <span className="text-sm font-semibold">{item.label}</span>}
+              <div className={`relative flex items-center px-3 h-11 rounded-lg transition-all duration-200 transform active:scale-95 mb-1.5
+                ${!showLabels ? 'justify-center' : 'gap-3'}
+                ${active ? 'bg-emerald-50/90 text-slate-800' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-700'}`}>
+                <item.icon className={`w-5 h-5 shrink-0 transition-colors duration-200 ${active ? 'text-emerald-700' : 'text-slate-400 group-hover:text-emerald-500'}`} strokeWidth={active ? 2.5 : 2} />
+                {showLabels && <span className={`flex-1 whitespace-nowrap text-sm transition-colors duration-200 ${active ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>}
               </div>
             </NavLink>
           )
@@ -180,14 +180,14 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
             <div key={section.trigger.label} className="space-y-1">
               <button
                 onClick={handleClick}
-                className={`w-full flex items-center px-3 py-2.5 rounded-xl transition-all duration-200 transform active:scale-95 group
-                  ${isSectionActive ? 'bg-teal-50 text-teal-700 shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-teal-600'}
-                  ${!showLabels ? 'justify-center' : 'gap-3'}`}
+                className={`w-full flex items-center px-3 h-11 rounded-lg transition-all duration-200 transform active:scale-95 group mb-1.5
+                  ${!showLabels ? 'justify-center' : 'gap-3'}
+                  ${isSectionActive || isOpen ? 'bg-emerald-50/90 text-slate-800' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-700'}`}
               >
-                <section.trigger.icon className={`w-5 h-5 shrink-0 transition-colors ${isSectionActive ? 'text-teal-600' : 'text-slate-400 group-hover:text-teal-500'}`} />
+                <section.trigger.icon className={`w-5 h-5 shrink-0 transition-colors duration-200 ${isSectionActive || isOpen ? 'text-emerald-700' : 'text-slate-400 group-hover:text-emerald-500'}`} strokeWidth={isSectionActive || isOpen ? 2.5 : 2} />
                 {showLabels && (
                   <>
-                    <span className="flex-1 text-left text-sm font-semibold">{section.trigger.label}</span>
+                    <span className={`flex-1 text-left text-sm transition-colors duration-200 ${isSectionActive || isOpen ? 'font-semibold' : 'font-medium'}`}>{section.trigger.label}</span>
                     {hasChildren && <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />}
                   </>
                 )}
@@ -200,10 +200,10 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
                       const active = isRouteActive(pathname, child.to)
                       return (
                         <NavLink key={child.to} to={child.to} onClick={isMobile ? onClose : undefined} className="block">
-                          <div className={`flex items-center rounded-lg text-[13px] transition-all duration-200 transform active:scale-95
-                            ${active ? 'text-teal-600 font-bold bg-teal-50/50' : 'text-slate-500 hover:text-teal-600 hover:bg-slate-50/50'}
-                            ${!showLabels ? 'justify-center py-2' : 'gap-3 px-4 py-2'}`}>
-                            <child.icon className={`w-4 h-4 transition-colors ${active ? 'text-teal-500' : 'text-slate-400 group-hover:text-teal-500'}`} />
+                          <div className={`flex items-center rounded-lg text-sm transition-all duration-200 transform active:scale-95 mb-0.5
+                            ${!showLabels ? 'justify-center py-2' : 'gap-3 px-4 h-9'}
+                            ${active ? 'bg-emerald-50/50 text-slate-800 font-semibold' : 'text-slate-500 hover:text-emerald-700 hover:bg-slate-50/50 font-medium'}`}>
+                            <child.icon className={`w-4 h-4 transition-colors ${active ? 'text-emerald-500' : 'text-slate-400 group-hover:text-emerald-500'}`} strokeWidth={active ? 2.5 : 2} />
                             {showLabels && child.label}
                           </div>
                         </NavLink>
@@ -222,9 +222,11 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
                const active = isRouteActive(pathname, item.to)
                return (
                  <NavLink key={item.to} to={item.to} onClick={isMobile ? onClose : undefined} className="block group">
-                   <div className={`relative flex items-center px-3 py-2.5 rounded-xl hover:bg-slate-50 hover:text-teal-600 transition-all duration-200 transform active:scale-95 ${active ? 'bg-teal-50 text-teal-700' : 'text-slate-600'} ${!showLabels ? 'justify-center' : 'gap-3'}`}>
-                     <item.icon className={`w-5 h-5 shrink-0 ${active ? 'text-teal-600' : 'text-slate-400 group-hover:text-teal-500'}`} />
-                     {showLabels && <span className="text-sm font-semibold">{item.label}</span>}
+                   <div className={`relative flex items-center px-3 h-11 rounded-lg transition-all duration-200 transform active:scale-95 mb-1.5
+                     ${!showLabels ? 'justify-center' : 'gap-3'}
+                     ${active ? 'bg-emerald-50/90 text-emerald-800' : 'text-slate-600 hover:bg-slate-50 hover:text-emerald-700'}`}>
+                     <item.icon className={`w-5 h-5 shrink-0 transition-colors duration-200 ${active ? 'text-emerald-700' : 'text-slate-400 group-hover:text-emerald-500'}`} strokeWidth={active ? 2.5 : 2} />
+                     {showLabels && <span className="flex-1 whitespace-nowrap text-sm font-medium transition-colors duration-200">{item.label}</span>}
                    </div>
                  </NavLink>
                )
@@ -232,6 +234,13 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
           </div>
         )}
       </nav>
+
+      {showLabels && (
+        <div className="px-4 py-3 border-t border-slate-200 shrink-0">
+          <p className="text-[11px] text-slate-800 font-bold tracking-wide">SUPER ADMIN PANEL</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Jain Sangh Management</p>
+        </div>
+      )}
     </div>
   );
 
@@ -239,12 +248,8 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
   if (isMobile) {
     return (
       <>
-        {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm z-40" onClick={onClose} />}
-        <div className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 bg-white shadow-2xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-            <span className="text-xl font-black bg-gradient-to-r from-teal-600 to-emerald-500 bg-clip-text text-transparent">JAIN SANGH</span>
-            <button onClick={onClose} className="p-2 text-slate-400 hover:bg-slate-100 rounded-full"><X className="w-6 h-6"/></button>
-          </div>
+        {isSidebarOpen && <div className="fixed inset-0 bg-black/20 z-40" onClick={onClose} />}
+        <div className={`fixed inset-y-0 left-0 z-50 w-[250px] transform transition-transform duration-200 ease-out bg-white border-r border-slate-200 shadow-xl ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           {content}
         </div>
       </>
@@ -252,8 +257,8 @@ export default function Sidebar({ isOpen: isSidebarOpen, onClose, isMobile }) {
   }
 
   return (
-    <aside className={`fixed top-16 bottom-0 left-0 z-10 transition-all duration-300 ease-in-out bg-white border-r border-slate-100 
-      ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+    <aside className={`hidden lg:block fixed top-14 bottom-0 left-0 z-10 transition-all duration-300 ease-in-out bg-white border-r border-slate-200
+      ${isSidebarOpen ? 'w-[250px]' : 'w-0 overflow-hidden'}`}>
       {content}
     </aside>
   );
