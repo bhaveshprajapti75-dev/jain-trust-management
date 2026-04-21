@@ -163,15 +163,15 @@ export default function Attendance() {
   };
 
   const columns = [
-    { key: 'id', label: 'SR. NO', align: 'left', render: (_, __, i) => (currentPage - 1) * recordsPerPage + i + 1 },
+    { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => (currentPage - 1) * recordsPerPage + i + 1 },
     { key: 'memberName', label: 'Member Name', align: 'center', sortable: true, render: v => (
-      <span className="font-bold text-teal-600">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'date', label: 'Date', align: 'center', sortable: true, render: v => (
-      <span className="text-slate-600 font-medium text-sm">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
-    { key: 'checkInTime', label: 'Check-In Time', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '-'}</span> },
-    { key: 'checkOutTime', label: 'Check-Out Time', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '-'}</span> },
+    { key: 'checkInTime', label: 'Check-In Time', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '-'}</span> },
+    { key: 'checkOutTime', label: 'Check-Out Time', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '-'}</span> },
     { key: 'status', label: 'Status', align: 'center', render: v => getStatusBadge(v) },
     { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
       <ActionButtons

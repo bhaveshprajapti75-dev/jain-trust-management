@@ -16,7 +16,7 @@ export default function PageHeader({ title, subtitle, breadcrumbs = [], action, 
             ))}
           </nav>
         )}
-        <h1 className="text-3xl text-slate-800 tracking-tight">{title}</h1>
+        <h1 className="text-xl font-semibold text-[#1A1A1A]">{title}</h1>
         {subtitle && <p className="text-sm text-slate-400 mt-0.5">{subtitle}</p>}
       </div>
       {action && <div className="flex items-center gap-2 shrink-0">{action}</div>}

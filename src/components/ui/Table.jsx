@@ -64,7 +64,7 @@ export default function Table({  // Add 'default' here
               >
                 {columns.map((col) => (
                   <td key={col.key} className={`px-5 py-3 ${col.align === 'center' ? 'text-center' : col.align === 'right' ? 'text-right' : 'text-left'}`}>
-                    {col.render ? col.render(row?.[col.key], row, i) : <span className="text-[12.5px] font-medium text-slate-700">{row?.[col.key]}</span>}
+                    {col.render ? col.render(row?.[col.key], row, i) : <span className="text-[12.5px] text-[#1A1A1A]">{row?.[col.key]}</span>}
                   </td>
                 ))}
               </tr>

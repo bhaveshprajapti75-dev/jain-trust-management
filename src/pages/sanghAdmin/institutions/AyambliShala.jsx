@@ -191,11 +191,11 @@ export default function AyambliShala() {
   const columns = [
     { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
     { key: 'name', label: 'Shala Name', align: 'center', sortable: true, render: v => (
-      <span className="font-bold text-teal-600">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
-    { key: 'trustName', label: 'Sangh', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
+    { key: 'trustName', label: 'Sangh', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '—'}</span> },
     { key: 'city', label: 'Village / City', align: 'center', render: v => (
-      <span className="text-slate-600 font-medium text-sm">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'sittingCapacity', label: 'Capacity', align: 'center' },
     { key: 'status', label: 'Status', align: 'center', render: (v, r) => (

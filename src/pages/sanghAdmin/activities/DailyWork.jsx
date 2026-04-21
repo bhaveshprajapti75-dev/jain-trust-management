@@ -162,20 +162,20 @@ export default function DailyWork() {
   };
 
   const columns = [
-    { key: 'id', label: 'SR. NO', align: 'left', render: (_, __, i) => (currentPage - 1) * recordsPerPage + i + 1 },
+    { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => (currentPage - 1) * recordsPerPage + i + 1 },
     { key: 'memberName', label: 'Member Name', align: 'center', sortable: true, render: v => (
-      <span className="font-bold text-teal-600">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'date', label: 'Date', align: 'center', sortable: true, render: v => (
-      <span className="text-slate-600 font-medium text-sm">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'project', label: 'Task/Project', align: 'center', sortable: true, render: v => (
-        <span className="text-slate-700 font-semibold text-sm">{v}</span>
+        <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'description', label: 'Description', align: 'center', render: v => (
-        <span className="text-slate-500 text-xs line-clamp-1 max-w-[200px] mx-auto">{v || '-'}</span>
+        <span className="text-[12.5px] text-[#1A1A1A] line-clamp-1 max-w-[200px] mx-auto">{v || '-'}</span>
     )},
-    { key: 'hours', label: 'Hours', align: 'center', render: v => <span className="text-slate-600 font-bold text-sm">{v || '0'}</span> },
+    { key: 'hours', label: 'Hours', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '0'}</span> },
     { key: 'status', label: 'Status', align: 'center', render: v => getStatusBadge(v) },
     { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
       <ActionButtons

@@ -273,14 +273,14 @@ export default function Events() {
 
   const eventColumns = [
     { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => i + 1 },
-    { key: 'eventName', label: 'Event Name', align: 'center', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
+    { key: 'eventName', label: 'Event Name', align: 'center', sortable: true, render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { key: 'eventType', label: 'Event Type', align: 'center', render: v => (
       <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold uppercase tracking-wider">{v}</span>
     )},
     { key: 'location', label: 'Location', align: 'center', render: (_, r) => (
-      <span className="text-slate-600 font-medium text-[12px]">{r.city || '—'}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{r.city || '—'}</span>
     )},
-    { key: 'organizerName', label: 'Organizer', align: 'center', render: v => <span className="text-slate-600 font-medium text-[12px]">{v || '—'}</span> },
+    { key: 'organizerName', label: 'Organizer', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '—'}</span> },
     { key: 'eventStatus', label: 'Status', align: 'center', render: v => {
         const s = EVENT_STATUSES.find(st => st.value === v) || { label: v, color: 'slate' };
         const colors = {
@@ -310,8 +310,8 @@ export default function Events() {
 
   const categoryColumns = [
     { key: 'id', label: 'Sr. No', align: 'left', render: (_, __, i) => i + 1 },
-    { key: 'categoryName', label: 'Category Name', align: 'center', sortable: true, render: (v) => <span className="font-bold text-teal-600">{v}</span> },
-    { key: 'description', label: 'Description', align: 'center', render: (v) => <span className="text-slate-500 text-[12px]">{v || '—'}</span> },
+    { key: 'categoryName', label: 'Category Name', align: 'center', sortable: true, render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
+    { key: 'description', label: 'Description', align: 'center', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v || '—'}</span> },
     { key: 'actions', label: 'Actions', align: 'center', render: (_, r) => (
       <ActionButtons
         onView={row => openCategoryModal('view', row)}
@@ -411,7 +411,7 @@ export default function Events() {
                 setActiveSubmodule("category");
                 setCurrentPage(1);
               }}
-              className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "category" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "category" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
             >
               Event Category
             </button>
@@ -420,7 +420,7 @@ export default function Events() {
                 setActiveSubmodule("event");
                 setCurrentPage(1);
               }}
-              className={`px-4 py-1.5 rounded-lg text-[13px] font-bold transition-all ${activeSubmodule === "event" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "event" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
             >
               Event
             </button>

@@ -466,10 +466,10 @@ export default function Members() {
   );
 
   const columns = [
-    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
-    { key: "name", label: "Name", align: "center", render: (v) => <span className="font-bold text-teal-700">{v}</span> },
+    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-[12.5px] text-[#1A1A1A]">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
+    { key: "name", label: "Name", align: "center", render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { key: "family_category", label: "Category", align: "center" },
-    { key: "role", label: "Relationship", align: "center", render: (v, r) => r?.is_family_head ? <span className="text-teal-600 font-bold">Head</span> : v },
+    { key: "role", label: "Relationship", align: "center", render: (v, r) => <span className="text-[12.5px] text-[#1A1A1A]">{r?.is_family_head ? "Head" : v}</span> },
     { key: "mobile", label: "Mobile", align: "center" },
     ...(activeTab === "Member" ? [{
       key: "is_volunteer",
@@ -486,8 +486,8 @@ export default function Members() {
   ];
 
   const familyColumns = [
-    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-slate-500 font-semibold">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
-    { key: "category", label: "Family Category Name", align: "center", render: (v) => <span className="font-bold text-teal-700">{v}</span> },
+    { key: "sr_no", label: "Sr. No", align: "left", render: (_, __, i) => <span className="text-[12.5px] text-[#1A1A1A]">{(currentPage - 1) * recordsPerPage + i + 1}</span> },
+    { key: "category", label: "Family Category Name", align: "center", render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { 
       key: "status", 
       label: "Status", 
@@ -528,12 +528,16 @@ export default function Members() {
   return (
     <CommonPageLayout title="Member Management" stats={stats}>
       {/* Tab Switcher */}
-      <div className="bg-white rounded-xl border border-slate-100 p-1 mb-5 flex gap-1">
+      <div className="bg-white rounded-xl border border-slate-100 p-1.5 mb-5 flex gap-1.5">
         {["Family", "Member", "Volunteers"].map((tab) => (
           <button
             key={tab}
             onClick={() => { setActiveTab(tab); setCurrentPage(1); }}
-            className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all ${activeTab === tab ? "bg-teal-50 text-teal-700 shadow-sm" : "text-slate-400 hover:text-slate-600 hover:bg-slate-50/50"}`}
+            className={`flex-1 py-2 rounded-md text-sm transition-all font-medium ${
+              activeTab === tab 
+                ? "bg-emerald-50/90 text-emerald-800 shadow-sm" 
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            }`}
           >
             {tab}
           </button>

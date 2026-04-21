@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 
-export default function FilterButton({ filters, options, onChange, onClear, dataCount }) {
+export default function FilterButton({ filters, options, onChange, onClear, dataCount, className }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openUp, setOpenUp] = useState(false);
   const [localFilters, setLocalFilters] = useState({ ...filters });
@@ -37,7 +37,7 @@ export default function FilterButton({ filters, options, onChange, onClear, data
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className={`relative ${className || ""}`} ref={dropdownRef}>
       <button
         onClick={() => {
           if (!isOpen && dropdownRef.current) {
@@ -54,38 +54,37 @@ export default function FilterButton({ filters, options, onChange, onClear, data
           }
           setIsOpen(!isOpen);
         }}
-        className={`flex items-center gap-1.5 px-4 h-10 rounded-xl border text-[13px] font-bold ${
+        className={`flex items-center gap-2 px-4 h-10 rounded-lg border text-[13px] font-medium transition-colors ${
           hasActive 
-            ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100" 
-            : "bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50"
+            ? "bg-emerald-50 border-emerald-500 text-emerald-700 hover:bg-emerald-100" 
+            : "bg-white border-slate-300 text-slate-700 hover:border-slate-400 hover:bg-slate-50"
         }`}
       >
-        <SlidersHorizontal className={`w-4 h-4 ${hasActive ? "text-emerald-600" : "text-slate-400"}`} />
+        <SlidersHorizontal className={`w-4 h-4 ${hasActive ? "text-emerald-600" : "text-slate-500"}`} />
         <span>Filter</span>
-        <ChevronDown className={`w-4 h-4 ${isOpen ? "rotate-180" : ""} ${hasActive ? "text-emerald-500" : "text-slate-400"}`} />
       </button>
 
       {isOpen && (
-        <div className={`absolute right-0 w-72 bg-white rounded-2xl border border-slate-200 shadow-lg z-[100] p-5 origin-top-right ${openUp ? "bottom-full mb-3" : "top-full mt-3"}`}>
-          <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-50">
-            <h3 className="text-[14px] font-bold text-slate-800">Filter By</h3>
+        <div className={`absolute right-0 w-72 bg-white rounded-lg border border-slate-200 shadow-lg z-[100] p-5 origin-top-right ${openUp ? "bottom-full mb-2" : "top-full mt-2"}`}>
+          <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+            <h3 className="text-sm font-medium text-slate-800">Filter By</h3>
             {hasActive && (
               <button
                 onClick={() => {
                   onClear();
                   setIsOpen(false);
                 }}
-                className="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 hover:underline transition-all uppercase tracking-wider"
+                className="text-xs font-medium text-emerald-600 hover:text-emerald-700 hover:underline transition-all uppercase tracking-wider"
               >
                 Clear All
               </button>
             )}
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-4">
             {(options || []).map((opt) => (
-              <div key={opt.key} className="space-y-2">
-                <label className="text-[11px] font-bold text-slate-300 uppercase tracking-widest pl-1">
+              <div key={opt.key} className="space-y-1.5">
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wider pl-1">
                   {opt.placeholder}
                 </label>
                 <CustomSelect
@@ -107,13 +106,13 @@ export default function FilterButton({ filters, options, onChange, onClear, data
                 onClear();
                 setIsOpen(false);
               }}
-              className="flex-1 h-9 bg-slate-50 text-slate-600 text-[12px] font-bold rounded-lg hover:bg-slate-100"
+              className="flex-1 h-9 bg-slate-50 text-slate-600 text-sm font-medium rounded-md border border-slate-200 hover:bg-slate-100 transition-colors"
             >
               Reset
             </button>
             <button
               onClick={handleApply}
-              className="flex-1 h-9 bg-emerald-600 text-white text-[12px] font-bold rounded-lg hover:bg-emerald-700"
+              className="flex-1 h-9 bg-emerald-700 text-white text-sm font-medium rounded-md hover:bg-emerald-800 transition-colors"
             >
               Apply
             </button>
@@ -164,12 +163,12 @@ function CustomSelect({ value, options, onChange, placeholder }) {
         }}
         className={`
           w-full flex items-center justify-between
-          px-4 py-2.5 rounded-xl border
-          text-[13px] font-bold
+          px-3 py-2 rounded-md border
+          text-sm font-medium transition-colors
           ${isOpen ? "border-emerald-500 text-emerald-700 bg-white" : 
             isAnythingSelected 
-              ? "border-emerald-200 bg-emerald-50/50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50" 
-              : "border-slate-200 bg-white text-slate-400 hover:border-slate-300 hover:bg-slate-50"}
+              ? "border-emerald-300 bg-emerald-50/50 text-emerald-700 hover:border-emerald-400 hover:bg-emerald-50" 
+              : "border-slate-300 bg-white text-slate-600 hover:border-slate-400 hover:bg-slate-50"}
         `}
       >
         <span className="truncate">
@@ -177,8 +176,8 @@ function CustomSelect({ value, options, onChange, placeholder }) {
         </span>
 
         <ChevronDown
-          className={`w-4 h-4 ${
-            isOpen ? "rotate-180 text-emerald-600" : isAnythingSelected ? "text-emerald-500" : "text-slate-300"
+          className={`w-4 h-4 transition-transform ${
+            isOpen ? "rotate-180 text-emerald-600" : isAnythingSelected ? "text-emerald-500" : "text-slate-400"
           }`}
         />
       </button>
@@ -186,9 +185,9 @@ function CustomSelect({ value, options, onChange, placeholder }) {
       {isOpen && (
         <div
           className={`
-            absolute left-0 right-0 z-[110] py-1.5 rounded-xl shadow-xl
+            absolute left-0 right-0 z-[110] py-1.5 rounded-md shadow-lg
             bg-white border border-slate-200 overflow-hidden
-            ${openUp ? "bottom-full mb-2" : "top-full mt-2"}
+            ${openUp ? "bottom-full mb-1.5" : "top-full mt-1.5"}
           `}
         >
           <div className="max-h-60 overflow-y-auto px-1.5 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
@@ -206,7 +205,7 @@ function CustomSelect({ value, options, onChange, placeholder }) {
                     setIsOpen(false);
                   }}
                   className={`
-                    w-full flex items-center justify-between px-3 py-2.5 my-0.5 rounded-lg text-[13px] font-bold
+                    w-full flex items-center justify-between px-3 py-2 my-0.5 rounded-md text-sm font-medium transition-colors
                     ${isSelected
                       ? "bg-emerald-600 text-white hover:bg-emerald-700"
                       : "text-slate-600 hover:bg-emerald-50 hover:text-emerald-700"
@@ -224,4 +223,3 @@ function CustomSelect({ value, options, onChange, placeholder }) {
     </div>
   );
 }
-

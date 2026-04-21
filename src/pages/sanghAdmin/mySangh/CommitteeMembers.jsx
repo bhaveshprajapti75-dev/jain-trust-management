@@ -178,7 +178,7 @@ export default function CommitteeMembers() {
       label: "Sr. No",
       align: 'left',
       render: (_, __, i) => (
-        <span className="text-slate-500 font-semibold">
+        <span className="text-[12.5px] text-[#1A1A1A]">
           {(currentPage - 1) * recordsPerPage + i + 1}
         </span>
       ),
@@ -187,7 +187,7 @@ export default function CommitteeMembers() {
       key: "name",
       label: "Member Name",
       align: 'center',
-      render: (n) => <span className="font-bold text-teal-700">{n}</span>,
+      render: (n) => <span className="text-[12.5px] text-[#1A1A1A]">{n}</span>,
     },
     { key: "role", label: "Position", align: 'center' },
     { key: "phone", label: "Phone", align: 'center' },

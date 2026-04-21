@@ -190,13 +190,13 @@ export default function Meetings() {
   const columns = [
     { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
     { key: 'title', label: 'Meeting Title', align: 'center', sortable: true, render: v => (
-      <span className="font-bold text-teal-600">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
-    { key: 'meetingType', label: 'Meeting Type', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v}</span> },
+    { key: 'meetingType', label: 'Meeting Type', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { key: 'date', label: 'Date', align: 'center', sortable: true, render: v => (
-      <span className="text-slate-600 font-medium text-sm">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
-    { key: 'mode', label: 'Mode', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v}</span> },
+    { key: 'mode', label: 'Mode', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { key: 'status', label: 'Status', align: 'center', render: v => getStatusBadge(v) },
     { key: 'actions', label: 'Action', align: 'center', render: (_, r) => (
       <ActionButtons

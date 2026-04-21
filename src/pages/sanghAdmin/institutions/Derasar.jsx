@@ -176,11 +176,11 @@ export default function Derasar() {
   const columns = [
     { key: 'id', label: 'Sr. No.', align: 'left', render: (_, __, i) => i + 1 },
     { key: 'name', label: 'Derasar Name', align: 'center', sortable: true, render: v => (
-      <span className="font-bold text-slate-800">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
-    { key: 'moolNayak', label: 'Mool Nayak', align: 'center', render: v => <span className="text-slate-600 font-medium text-sm">{v || '—'}</span> },
+    { key: 'moolNayak', label: 'Mool Nayak', align: 'center', render: v => <span className="text-[12.5px] text-[#1A1A1A]">{v || '—'}</span> },
     { key: 'city', label: 'Village / City', align: 'center', render: v => (
-      <span className="text-slate-600 font-medium text-sm">{v}</span>
+      <span className="text-[12.5px] text-[#1A1A1A]">{v}</span>
     )},
     { key: 'pratimas', label: 'Pratimas', align: 'center' },
     { key: 'poojaris', label: 'Poojaris', align: 'center' },

@@ -109,7 +109,7 @@ export default function LinkedTrusts() {
       label: "Sr. No.",
       align: 'left',
       render: (_, __, i) => (
-        <span className="text-slate-500 font-semibold">
+        <span className="text-[12.5px] text-[#1A1A1A]">
           {(currentPage - 1) * recordsPerPage + i + 1}
         </span>
       ),
@@ -118,7 +118,7 @@ export default function LinkedTrusts() {
       key: "name",
       label: "Trust Name",
       align: 'center',
-      render: (name) => <span className="font-bold text-teal-700">{name}</span>,
+      render: (name) => <span className="text-[12.5px] text-[#1A1A1A]">{name}</span>,
     },
     { key: "category", label: "Category", align: 'center' },
     { key: "phone", label: "Phone", align: 'center' },
