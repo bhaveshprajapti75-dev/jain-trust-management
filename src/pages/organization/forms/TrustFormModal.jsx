@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, Eye, Upload, FileText, User, Phone, Mail, MapPin, Users } from 'lucide-react';
-import Input from '../../../components/common/Input';
-import StatusToggle from '../../../components/common/StatusToggle';
+import Input from '../../../components/ui/Input';
+import StatusToggle from '../../../components/ui/StatusToggle';
 
 export default function TrustFormModal({ isOpen, onClose, initialData, onSave }) {
   const [activeTab, setActiveTab] = useState('overview');

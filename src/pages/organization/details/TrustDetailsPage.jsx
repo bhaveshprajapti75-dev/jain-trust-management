@@ -11,7 +11,7 @@ import {
   CalendarDays,
   Users,
 } from 'lucide-react'
-import StatusToggle from '../../../components/common/StatusToggle'
+import StatusToggle from '../../../components/ui/StatusToggle'
 
 export default function TrustDetailsPage({
   trust,

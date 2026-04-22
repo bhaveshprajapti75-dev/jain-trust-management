@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import CommonPageLayout from '../../components/common/CommonPageLayout';
-import Button from '../../components/common/Button';
-import Table from '../../components/common/Table';
-import StatusBadge from '../../components/common/StatusBadge';
+import CommonPageLayout from '../../components/ui/CommonPageLayout';
+import Button from '../../components/ui/Button';
+import Table from '../../components/ui/Table';
+import StatusBadge from '../../components/ui/StatusBadge';
 import { Pencil, Trash2, Eye, Plus } from 'lucide-react';
 
 export default function Managers() {

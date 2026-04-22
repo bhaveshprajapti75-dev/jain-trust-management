@@ -1,5 +1,5 @@
 import { Globe2, MapPinned, Navigation, Building2, Hash } from 'lucide-react'
-import StatCard from '../../components/common/StatCard'
+import StatCard from '../../components/ui/StatCard'
 
 export default function LocationStats({ statsData }) {
   

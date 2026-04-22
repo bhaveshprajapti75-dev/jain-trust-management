@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Settings2, Shield, UserCog } from 'lucide-react'
-import EmptyState from '../../components/common/EmptyState'
-import CommonCard from '../../components/common/CommonCard'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import EmptyState from '../../components/ui/EmptyState'
+import CommonCard from '../../components/ui/CommonCard'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 
 const DATA = [
   { id: 1, title: 'Organization Defaults', subtitle: 'Trust naming, receipt prefixes, and document numbering', status: 'Active' },

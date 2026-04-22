@@ -1,9 +1,9 @@
 import { Gem, MapPin, Users, CalendarDays } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import Button from '../../components/common/Button'
-import StatusBadge from '../../components/common/StatusBadge'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
-import Table from '../../components/common/Table'
+import Button from '../../components/ui/Button'
+import StatusBadge from '../../components/ui/StatusBadge'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
+import Table from '../../components/ui/Table'
 import { Pencil } from 'lucide-react'
 
 const DERASARS = [

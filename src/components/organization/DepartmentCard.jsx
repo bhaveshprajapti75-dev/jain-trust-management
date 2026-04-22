@@ -1,5 +1,5 @@
 import { Building2 } from 'lucide-react'
-import CommonCard from '../common/CommonCard'
+import CommonCard from '../ui/CommonCard'
 
 export default function DepartmentCard({ dept, trustName, memberCount, onEdit, onDelete, index = 0, onClick }) {
   return (

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { ChevronDown } from 'lucide-react'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 import { INITIAL_ROLES, PERM_GROUPS, hasPerm } from './RoleData'
 
 export default function RolesAndPermissionsPage() {

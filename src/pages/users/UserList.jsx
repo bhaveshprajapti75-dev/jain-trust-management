@@ -1,18 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Building2, CalendarDays, ChevronLeft, ChevronRight, FileText, Mail, Pencil, Phone, Plus, ShieldCheck, Trash2, Upload, Users, UserCheck, UserX } from 'lucide-react'
-import Button from '../../components/common/Button'
-import ConfirmModal from '../../components/common/ConfirmModal'
-import Modal from '../../components/common/Modal'
-import FilterBar from '../../components/common/FilterBar'
-import EmptyState from '../../components/common/EmptyState'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
-import Input from '../../components/common/Input'
-import PermissionChip from '../../components/common/PermissionChip'
+import Button from '../../components/ui/Button'
+import ConfirmModal from '../../components/ui/ConfirmModal'
+import Modal from '../../components/ui/Modal'
+import FilterBar from '../../components/ui/FilterBar'
+import EmptyState from '../../components/ui/EmptyState'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
+import Input from '../../components/ui/Input'
+import PermissionChip from '../../components/ui/PermissionChip'
 import UserCard from '../../components/users/UserCard'
 import UserDocuments from '../../components/users/UserDocuments'
 import UserStatusToggle from '../../components/users/UserStatusToggle'
-import Table from '../../components/common/Table'
+import SearchBar from '../../components/ui/SearchBar'
+import Table from '../../components/ui/Table'
 import { INITIAL_USERS, INITIAL_USER_DOCS, INITIAL_ACTIVITIES, getStatusCounts } from './userData'
 import { getCount, hasPerm, INITIAL_ROLES, PERM_GROUPS } from '../RolesAndPermissions/RoleData'
 import { INITIAL_TRUSTS, INITIAL_SANGHS, INITIAL_DEPARTMENTS } from '../organization/orgData'
@@ -762,33 +763,56 @@ export default function UserList() {
         onTabChange={(tabId) => navigate(tabId)}
         action={<Button icon={Plus} onClick={openAddModal}>Add User</Button>}
         stats={stats}
-        searchValue={search}
-        onSearchChange={function(value) {
-          setPage(1)
-          setSearch(value)
-        }}
-        searchPlaceholder="Search by name, phone, email, or role..."
-        toolbar={<FilterBar filters={filters} options={filterOptions} onChange={function(key, value) { setPage(1); setFilters({ ...filters, [key]: value }) }} onClear={function() { setPage(1); setFilters({}); setSearch('') }} />}
         isEmpty={!filteredUsers.length}
         emptyState={<EmptyState message="No users found" description="Adjust the filters or add a user to the selected trust or sangh." icon={Users} action={<Button variant="secondary" size="sm" icon={Plus} onClick={openAddModal}>Add User</Button>} />}
       >
-      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-5">
+          <div className="relative w-full md:w-80 group">
+            <SearchBar 
+              value={search} 
+              onChange={function(value) {
+                setPage(1)
+                setSearch(value)
+              }} 
+              placeholder="Search by name, phone, email, or role..." 
+            />
+          </div>
+          <div className="flex items-center gap-2.5 w-full md:w-auto justify-end relative">
+            <FilterBar 
+              filters={filters} 
+              options={filterOptions} 
+              onChange={function(key, value) { 
+                setPage(1); 
+                setFilters({ ...filters, [key]: value }) 
+              }} 
+              onClear={function() { 
+                setPage(1); 
+                setFilters({}); 
+                setSearch('') 
+              }} 
+            />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
         <Table 
           columns={[
             {
               key: 'srNo',
               label: 'Sr. No.',
-              align: 'center',
-              render: (_, __, i) => <span className="text-[13.5px] font-medium text-slate-500">{(currentPage - 1) * ITEMS_PER_PAGE + i + 1}</span>
+              align: 'left',
+              render: (_, __, i) => <span className="text-[12.5px] font-medium text-slate-500">{(currentPage - 1) * ITEMS_PER_PAGE + i + 1}</span>
             },
             {
               key: 'userInfo',
               label: 'User Info',
+              align: 'center',
               render: (_, user) => (
-                <div className="flex items-center gap-3 py-1">
+                <div className="flex items-center gap-3 py-1 justify-center">
                   <img src={user.avatar || 'https://randomuser.me/api/portraits/men/32.jpg'} alt="" className="w-9 h-9 rounded-full object-cover border border-slate-200" />
-                  <div>
-                    <p className="text-[13.5px] font-bold text-slate-800 transition-colors">{user.name}</p>
+                  <div className="text-left">
+                    <p className="text-[12.5px] font-bold text-slate-800 transition-colors">{user.name}</p>
                     <p className="text-[11.5px] font-medium text-slate-500">{user.email || user.phone}</p>
                   </div>
                 </div>
@@ -797,10 +821,11 @@ export default function UserList() {
             {
               key: 'role',
               label: 'Role & Permissions',
+              align: 'center',
               render: (_, user) => {
                 const role = roles.find(item => item.id === user.roleId)
                 return (
-                  <div className="flex flex-col gap-1 items-start text-left">
+                  <div className="flex flex-col gap-1 items-center text-center">
                     <span className="text-[12.5px] font-bold text-slate-700">{role?.name || '-'}</span>
                     <span className="text-[9.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200">{role?.type || 'No Role'}</span>
                   </div>
@@ -810,11 +835,12 @@ export default function UserList() {
             {
               key: 'entity',
               label: 'Assigned Entity',
+              align: 'center',
               render: (_, user) => {
                 const trust = trusts.find(item => item.id === user.trustId)
                 const sangh = sanghs.find(item => item.id === user.sanghId)
                 return (
-                  <div className="flex flex-col gap-1 items-start text-left">
+                  <div className="flex flex-col gap-1 items-center text-center">
                     <span className="text-[12.5px] font-bold text-slate-700">{trust?.name || 'All Trusts'}</span>
                     {sangh ? <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 border border-slate-100 w-fit">{sangh.name}</span> : null}
                   </div>
@@ -913,7 +939,8 @@ export default function UserList() {
             ) : null}
           </div>
         </div>
-      </CommonPageLayout>
+      </div>
+    </CommonPageLayout>
 
       <Modal
         isOpen={showModal}

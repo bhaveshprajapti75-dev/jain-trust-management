@@ -8,11 +8,14 @@ import {
   ChevronDown,
   Fingerprint,
 } from "lucide-react";
-import SearchBar from "../common/SearchBar";
+import SearchBar from "../ui/SearchBar";
 
 export default function Navbar({ onMenuClick, sidebarOpen, onToggleSidebar }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
+
+  const userName = sessionStorage.getItem('userName') || 'User';
+  const userRole = sessionStorage.getItem('userRole');
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -24,6 +27,16 @@ export default function Navbar({ onMenuClick, sidebarOpen, onToggleSidebar }) {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Get initials for avatar
+  const getInitials = (name) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-20 bg-white border-b border-slate-200">
@@ -81,15 +94,15 @@ export default function Navbar({ onMenuClick, sidebarOpen, onToggleSidebar }) {
               }`}
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shrink-0">
-                <span className="text-[13px] font-bold text-white">ND</span>
+                <span className="text-[13px] font-bold text-white">{getInitials(userName)}</span>
               </div>
 
               <div className="hidden lg:block text-left">
                 <p className="text-[14px] font-semibold text-slate-800 leading-none">
-                  Naman Doshi
+                  {userName}
                 </p>
                 <p className="text-[11px] text-emerald-600 mt-0.5 uppercase tracking-wide">
-                  {localStorage.getItem('userRole') === 'sanghAdmin' ? 'Sangh Admin' : 'Super Admin'}
+                  {userRole === 'sanghAdmin' ? 'Sangh Admin' : 'Super Admin'}
                 </p>
               </div>
 
@@ -114,7 +127,11 @@ export default function Navbar({ onMenuClick, sidebarOpen, onToggleSidebar }) {
                 <div className="h-px bg-slate-200 my-1"></div>
 
                 <button
-                  onClick={() => setIsDropdownOpen(false)}
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    sessionStorage.clear();
+                    window.location.href = '/login';
+                  }}
                   className="w-full flex items-center gap-2 px-3 py-2 text-[14px] text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
                 >
                   <LogOut className="w-4 h-4" strokeWidth={2} />

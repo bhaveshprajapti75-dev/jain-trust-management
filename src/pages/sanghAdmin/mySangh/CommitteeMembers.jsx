@@ -22,16 +22,17 @@ import {
   ChevronDown,
   Contact,
 } from "lucide-react";
-import CommonPageLayout from "../../../components/common/CommonPageLayout";
-import Table from "../../../components/common/Table";
-import ConfirmModal from "../../../components/common/ConfirmModal";
-import FilterButton from "../../../components/common/FilterButton";
-import Modal from "../../../components/common/Modal";
-import Input from "../../../components/common/Input";
-import Button from "../../../components/common/Button";
-import Pagination from "../../../components/common/Pagination";
-import DatePicker from "../../../components/common/DatePicker";
-import { useToast } from "../../../components/common/Toast";
+import CommonPageLayout from "../../../components/ui/CommonPageLayout";
+import Table from "../../../components/ui/Table";
+import ConfirmModal from "../../../components/ui/ConfirmModal";
+import FilterButton from "../../../components/ui/FilterButton";
+import Modal from "../../../components/ui/Modal";
+import Input from "../../../components/ui/Input";
+import Button from "../../../components/ui/Button";
+import Pagination from "../../../components/ui/Pagination";
+import DatePicker from "../../../components/ui/DatePicker";
+import { useToast } from "../../../components/ui/Toast";
+import ActionButtons from "../../../components/ui/ActionButtons";
 
 const INITIAL_FORM = {
   name: "",
@@ -59,65 +60,25 @@ export default function CommitteeMembers() {
   const [saving, setSaving] = useState(false);
   const showToast = useToast();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("sangh_committee_members");
-    if (stored) {
-      setMembers(JSON.parse(stored));
+  const fetchMembers = () => {
+    try {
+      setLoading(true);
+      const stored = sessionStorage.getItem("sangh_committee_members");
+      if (stored) {
+        setMembers(JSON.parse(stored));
+      } else {
+        setMembers([]);
+      }
+    } catch (error) {
+      console.error("Failed to load committee members from storage", error);
+      setMembers([]);
+    } finally {
       setLoading(false);
-    } else {
-      setTimeout(() => {
-        const defaultData = [
-          {
-            id: 1,
-            name: "Rajesh Shah",
-            role: "President",
-            phone: "9876543210",
-            email: "rajesh.shah@example.com",
-            status: "Active",
-            addedAt: "2024-01-15",
-            gender: "Male",
-            birthDate: "12/05/1980",
-            bloodGroup: "O+",
-            city: "Mumbai",
-            address: "123, Jain Society, Borivali West",
-          },
-          {
-            id: 2,
-            name: "Suresh Mehta",
-            role: "Secretary",
-            phone: "9825011223",
-            email: "suresh.m@example.com",
-            status: "Active",
-            addedAt: "2024-02-10",
-            gender: "Male",
-            birthDate: "22/08/1985",
-            bloodGroup: "A+",
-            city: "Ahmedabad",
-            address: "45, Adarsh Nagar, Satellite",
-          },
-          {
-            id: 3,
-            name: "Amit Jain",
-            role: "Treasurer",
-            phone: "9988776655",
-            email: "amit.jain@example.com",
-            status: "Active",
-            addedAt: "2024-03-05",
-            gender: "Male",
-            birthDate: "05/12/1990",
-            bloodGroup: "B+",
-            city: "Indore",
-            address: "12, Mahaveer Marg",
-          },
-        ];
-        setMembers(defaultData);
-        localStorage.setItem(
-          "sangh_committee_members",
-          JSON.stringify(defaultData),
-        );
-        setLoading(false);
-      }, 300);
     }
+  };
+
+  useEffect(() => {
+    fetchMembers();
   }, []);
 
   const filteredMembers = useMemo(
@@ -145,13 +106,13 @@ export default function CommitteeMembers() {
     },
     {
       title: "Active Member",
-      value: members.filter((m) => m.status === "Active").length,
+      value: members.filter((m) => m.status?.toUpperCase() === "ACTIVE").length,
       icon: UserCheck,
       color: "emerald",
     },
     {
       title: "Inactive Member",
-      value: members.filter((m) => m.status === "Inactive").length,
+      value: members.filter((m) => m.status?.toUpperCase() === "INACTIVE").length,
       icon: UserMinus,
       color: "rose",
     },
@@ -167,7 +128,7 @@ export default function CommitteeMembers() {
 
   const updateMembers = (updated) => {
     setMembers(updated);
-    localStorage.setItem("sangh_committee_members", JSON.stringify(updated));
+    sessionStorage.setItem("sangh_committee_members", JSON.stringify(updated));
   };
 
   const handleDelete = () => {
@@ -215,8 +176,9 @@ export default function CommitteeMembers() {
     {
       key: "sr_no",
       label: "Sr. No",
+      align: 'left',
       render: (_, __, i) => (
-        <span className="text-slate-500 font-semibold">
+        <span className="text-[12.5px] text-[#1A1A1A]">
           {(currentPage - 1) * recordsPerPage + i + 1}
         </span>
       ),
@@ -224,10 +186,11 @@ export default function CommitteeMembers() {
     {
       key: "name",
       label: "Member Name",
-      render: (n) => <span className="font-bold text-teal-700">{n}</span>,
+      align: 'center',
+      render: (n) => <span className="text-[12.5px] text-[#1A1A1A]">{n}</span>,
     },
-    { key: "role", label: "Position" },
-    { key: "phone", label: "Phone" },
+    { key: "role", label: "Position", align: 'center' },
+    { key: "phone", label: "Phone", align: 'center' },
     {
       key: "status",
       label: "Status",
@@ -235,7 +198,8 @@ export default function CommitteeMembers() {
       render: (s, row) => (
         <button
           onClick={() => {
-            const nextStatus = s === "Active" ? "Inactive" : "Active";
+            const isActive = s?.toUpperCase() === "ACTIVE";
+            const nextStatus = isActive ? "INACTIVE" : "ACTIVE";
             updateMembers(
               members.map((m) =>
                 m.id === row.id ? { ...m, status: nextStatus } : m,
@@ -243,10 +207,10 @@ export default function CommitteeMembers() {
             );
             showToast(`Status set to ${nextStatus} successfully!`, "success");
           }}
-          className={`relative inline-flex h-5 w-9 items-center rounded-xl px-[3px] transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-teal-500/20 ${s === "Active" ? "bg-emerald-500" : "bg-slate-300"}`}
+          className={`relative inline-flex h-5 w-9 items-center rounded-xl px-[3px] transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-teal-500/20 ${s?.toUpperCase() === "ACTIVE" ? "bg-emerald-500" : "bg-slate-300"}`}
         >
           <span
-            className={`h-3.5 w-3.5 rounded-xl bg-white shadow-sm transition-all duration-300 ${s === "Active" ? "translate-x-[16px]" : "translate-x-0"}`}
+            className={`h-3.5 w-3.5 rounded-xl bg-white shadow-sm transition-all duration-300 ${s?.toUpperCase() === "ACTIVE" ? "translate-x-[16px]" : "translate-x-0"}`}
           />
         </button>
       ),
@@ -255,47 +219,29 @@ export default function CommitteeMembers() {
       key: "actions",
       label: "Action",
       align: "center",
-      render: (_, r) => {
-        const btnStyles = {
-          teal: "bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white",
-          sky: "bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white",
-          rose: "bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white",
-        };
-
-        return (
-          <div className="flex gap-2 justify-center">
-            {[
-              { icon: Eye, color: "teal", t: "view" },
-              { icon: Edit, color: "sky", t: "edit" },
-              { icon: Trash2, color: "rose", t: "delete" },
-            ].map((a) => (
-              <button
-                key={a.t}
-                onClick={() => openModal(a.t, r)}
-                className={`p-1.5 rounded-xl transition-all duration-200 ${btnStyles[a.color]}`}
-                title={a.t.charAt(0).toUpperCase() + a.t.slice(1)}
-              >
-                <a.icon className="w-4 h-4" />
-              </button>
-            ))}
-          </div>
-        );
-      },
+      render: (_, r) => (
+        <ActionButtons
+          onView={row => openModal('view', row)}
+          onEdit={row => openModal('edit', row)}
+          onDelete={row => openModal('delete', row)}
+          row={r}
+        />
+      ),
     },
   ];
 
   return (
     <CommonPageLayout title="Committee Members" stats={stats}>
-      <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="p-4 border-b border-slate-50 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="w-full sm:max-w-sm relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+          <div className="w-full sm:max-w-sm relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#10b981] transition-colors" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by name..."
-              className="w-full h-[36px] pl-11 pr-4 rounded-xl border border-slate-200 bg-slate-50/30 text-[13px] outline-none focus:ring-2 focus:ring-teal-50 focus:border-teal-500 transition-all font-medium"
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
             />
           </div>
           <div className="flex gap-2">
@@ -322,24 +268,32 @@ export default function CommitteeMembers() {
               ]}
               onChange={(k, v) => setFilters((f) => ({ ...f, [k]: v }))}
               onClear={() => setFilters({ status: "", role: "" })}
+              className="h-10 rounded-lg border-gray-300"
             />
-            <button
+            <Button
+              variant="emerald"
+              icon={Plus}
               onClick={() => setModal({ type: "add", data: null })}
-              className="h-[36px] flex items-center gap-2 bg-teal-600 text-white px-4 rounded-xl text-[13px] font-bold hover:bg-teal-700 transition-all shadow-md shadow-teal-50"
+              className="h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10"
             >
-              <Plus className="w-4 h-4" />
-              <span>Add Member</span>
-            </button>
+              ADD MEMBER
+            </Button>
           </div>
         </div>
 
-        <Table
-          columns={columns}
-          data={paginatedMembers}
-          loading={loading}
-          skipCard
-          emptyMessage="No members found"
-        />
+        <div className="overflow-hidden border border-gray-300 rounded-lg bg-white mb-4">
+          <div className="m-3 mt-3">
+            <Table
+              columns={columns}
+              data={paginatedMembers}
+              loading={loading}
+              skipCard
+              variant="emerald"
+              emptyMessage="No members found"
+            />
+          </div>
+        </div>
+        
         <Pagination
           currentPage={currentPage}
           totalRecords={filteredMembers.length}
@@ -348,6 +302,7 @@ export default function CommitteeMembers() {
           onRecordsPerPageChange={setRecordsPerPage}
         />
       </div>
+
 
       {/* Unified Add/Edit Modal */}
       <Modal
@@ -360,11 +315,16 @@ export default function CommitteeMembers() {
             <Button
               variant="secondary"
               onClick={() => setModal({ type: null, data: null })}
+              className="w-32 h-10 text-[13px] font-bold rounded-xl border-slate-200 text-slate-500 hover:bg-slate-50 transition-all shadow-sm"
             >
               Cancel
             </Button>
-            <Button loading={saving} onClick={handleSave}>
-              {modal.type === "edit" ? "Update" : "Add"} Member
+            <Button
+              variant="emerald"
+              onClick={handleSave}
+              className="w-32 h-10 text-[13px] font-bold shadow-lg shadow-emerald-900/10 rounded-xl"
+            >
+              {modal.type === "edit" ? "Update" : "Save"} Member
             </Button>
           </div>
         }

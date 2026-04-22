@@ -1,6 +1,6 @@
 import React from 'react';
 import { Building2, Users, Link2 } from 'lucide-react';
-import StatCard from '../../components/common/StatCard';
+import StatCard from '../../components/ui/StatCard';
 
 export default function OrgOverview({ stats }) {
   const items = [

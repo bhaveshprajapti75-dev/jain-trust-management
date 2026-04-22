@@ -1,6 +1,6 @@
 import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { Edit2, Trash2, Eye, X, Check, AlertTriangle, ArrowLeft } from 'lucide-react';
-import StatusToggle from '../../components/common/StatusToggle';
+import StatusToggle from '../../components/ui/StatusToggle';
 import { generateOrgInitialData, INITIAL_SANGHS } from './orgData';
 
 const OrgTable = forwardRef(({ activeTab, searchTerm, itemsPerPage, currentPage, setTotalEntries, onDataChange }, ref) => {
@@ -62,8 +62,8 @@ const OrgTable = forwardRef(({ activeTab, searchTerm, itemsPerPage, currentPage,
         <table className="w-full table-fixed">
           <thead>
             <tr className="bg-emerald-500 text-white text-[11px] font-bold uppercase tracking-widest">
-              <th className="w-16 px-6 py-4 text-center">Sr.</th>
-              <th className="px-6 py-4 text-left">Organization Name</th>
+              <th className="w-16 px-6 py-4 text-left">Sr.</th>
+              <th className="px-6 py-4 text-center">Organization Name</th>
               <th className="px-6 py-4 text-center">Location</th>
               <th className="px-6 py-4 text-center">Status</th>
               <th className="px-6 py-4 text-center">Action</th>
@@ -72,8 +72,8 @@ const OrgTable = forwardRef(({ activeTab, searchTerm, itemsPerPage, currentPage,
           <tbody className="divide-y divide-slate-100 text-sm">
             {paginatedData.map((row, idx) => (
               <tr key={row.id} className="hover:bg-slate-50 transition-colors">
-                <td className="px-6 py-4 text-center text-slate-400">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
-                <td className="px-6 py-4 font-bold text-slate-700">{row.name}</td>
+                <td className="px-6 py-4 text-left text-slate-400">{(currentPage - 1) * itemsPerPage + idx + 1}</td>
+                <td className="px-6 py-4 text-center font-bold text-slate-700">{row.name}</td>
                 <td className="px-6 py-4 text-center text-slate-500 font-medium">{row.city}</td>
                 <td className="px-6 py-4">
                   <div className="flex justify-center">
