@@ -347,10 +347,10 @@ export default function Events() {
             key={tab}
             type="button"
             onClick={() => setActiveTab(i)}
-            className={`px-6 py-2.5 text-[13px] font-bold rounded-xl whitespace-nowrap transition-all duration-300 ${
+            className={`px-6 py-2.5 text-[12.5px] text-[#1A1A1A] rounded-xl whitespace-nowrap transition-all duration-300 ${
               activeTab === i
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
-                : "text-slate-400 hover:text-slate-600 hover:bg-white"
+                ? "bg-emerald-600 !text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
+                : "text-[#1A1A1A]/60 hover:text-[#1A1A1A] hover:bg-white"
             }`}
           >
             {tab}
@@ -411,7 +411,7 @@ export default function Events() {
                 setActiveSubmodule("category");
                 setCurrentPage(1);
               }}
-              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "category" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "category" ? "bg-emerald-600 !text-white shadow-sm" : "text-[#1A1A1A]/60 hover:text-[#1A1A1A]"}`}
             >
               Event Category
             </button>
@@ -420,7 +420,7 @@ export default function Events() {
                 setActiveSubmodule("event");
                 setCurrentPage(1);
               }}
-              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "event" ? "bg-emerald-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+              className={`px-4 py-1.5 rounded-lg text-[12.5px] text-[#1A1A1A] transition-all ${activeSubmodule === "event" ? "bg-emerald-600 !text-white shadow-sm" : "text-[#1A1A1A]/60 hover:text-[#1A1A1A]"}`}
             >
               Event
             </button>
@@ -435,7 +435,7 @@ export default function Events() {
               value={activeSubmodule === "event" ? search : categorySearch}
               onChange={(e) => (activeSubmodule === "event" ? setSearch(e.target.value) : setCategorySearch(e.target.value))}
               placeholder={activeSubmodule === "event" ? "Search event name, code or city..." : "Search category name or description..."}
-              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all  placeholder:text-slate-400 shadow-sm"
             />
           </div>
           <div className="flex items-center gap-2">

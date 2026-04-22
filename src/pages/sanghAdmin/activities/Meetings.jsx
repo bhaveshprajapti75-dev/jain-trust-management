@@ -83,7 +83,7 @@ export default function Meetings() {
   const [modalMode, setModalMode] = useState('add');
   const [currentItem, setCurrentItem] = useState(null);
   const [formData, setFormData] = useState(emptyForm);
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState('Meetings');
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -230,10 +230,10 @@ export default function Meetings() {
             key={tab}
             type="button"
             onClick={() => setActiveTab(i)}
-            className={`px-5 py-2 text-[12px] font-bold rounded-xl transition-all duration-300 ${
+            className={`px-5 py-2 text-[12.5px] text-[#1A1A1A] rounded-xl transition-all duration-300 ${
               activeTab === i
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
-                : "text-slate-400 hover:text-slate-600 hover:bg-white"
+                ? "bg-emerald-600 !text-white shadow-md shadow-emerald-100 ring-1 ring-emerald-500/20"
+                : "text-[#1A1A1A]/60 hover:text-[#1A1A1A] hover:bg-white"
             }`}
           >
             {tab}
@@ -287,18 +287,18 @@ export default function Meetings() {
   return (
     <CommonPageLayout title="Meeting Management" stats={stats}>
       <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-          <div className="w-full sm:max-w-sm relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div className="flex w-full md:w-[350px] items-center border border-gray-300 rounded-lg px-3 h-10 bg-white">
+            <Search className="w-4 h-4 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by Title, Code, Organizer..."
-              className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
+              placeholder={`Search ${activeTab}...`}
+              className="ml-2 flex-1 outline-none text-slate-700 text-sm placeholder:text-slate-400 bg-transparent"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full md:w-auto justify-end gap-2">
             <FilterButton
               filters={filters}
               options={[

@@ -38,6 +38,7 @@ export default function Attendance() {
   const [filters, setFilters] = useState({ status: 'All' });
   const [currentPage, setCurrentPage] = useState(1);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
+  const [activeTab, setActiveTab] = useState('Attendance');
   const showToast = useToast();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -233,18 +234,18 @@ export default function Attendance() {
   return (
     <CommonPageLayout title="Attendance Management" stats={stats}>
       <div className="w-full relative bg-white p-3 rounded-xl border border-slate-200">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-          <div className="w-full sm:max-w-sm relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+          <div className="flex w-full md:w-[350px] items-center border border-gray-300 rounded-lg px-3 h-10 bg-white">
+            <Search className="w-4 h-4 text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by Member Name..."
+              placeholder={`Search ${activeTab}...`}
               className="w-full h-10 pl-11 pr-4 rounded-lg border border-gray-300 bg-white text-[13px] outline-none focus:ring-2 focus:ring-emerald-50 focus:border-emerald-500 transition-all font-medium text-slate-700 shadow-sm"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex w-full md:w-auto justify-end gap-2">
             <FilterButton
               filters={filters}
               options={[
