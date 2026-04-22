@@ -58,9 +58,9 @@ export default function CommonPageLayout({
                   onClick={() => onTabChange && onTabChange(tabId)} 
                   className={`h-10 text-[14px] flex-1 rounded-md transition-all duration-150 flex items-center justify-center
                     ${activeTab === tabId 
-                      ? 'bg-emerald-50/80 text-emerald-800 font-semibold' 
-                      : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-900 font-medium' 
-                  }`}
+                      ? 'bg-emerald-50/80 text-slate-800' 
+                      : 'text-slate-600 hover:bg-slate-100/90 hover:text-slate-900' 
+                  } transition-all duration-150 flex items-center justify-center`}
                 >
                   {tabLabel.toUpperCase()}
                 </button>
@@ -70,25 +70,23 @@ export default function CommonPageLayout({
         )}
       </div>
 
-      <div className="px-5 lg:px-7 mt-2">
-        <div className={`rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ${contentClassName}`}>
-          {hasControls ? (
-            <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-5">
-              {typeof searchValue === 'string' ? (
-                <div className="relative w-full md:w-80 group">
-                  <SearchBar value={searchValue} onChange={onSearchChange} placeholder={searchPlaceholder} />
-                </div>
-              ) : <div />}
-              {toolbar ? (
-                <div className="flex items-center gap-2.5 w-full md:w-auto justify-end relative">
-                  {toolbar}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
+      <div className={`px-5 lg:px-7 mt-2 ${contentClassName}`}>
+        {hasControls ? (
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-5">
+            {typeof searchValue === 'string' ? (
+              <div className="relative w-full md:w-80 group">
+                <SearchBar value={searchValue} onChange={onSearchChange} placeholder={searchPlaceholder} />
+              </div>
+            ) : <div />}
+            {toolbar ? (
+              <div className="flex items-center gap-2.5 w-full md:w-auto justify-end relative">
+                {toolbar}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
-          {isEmpty ? emptyState || <EmptyState /> : children}
-        </div>
+        {isEmpty ? emptyState || <EmptyState /> : children}
       </div>
     </div>
   )

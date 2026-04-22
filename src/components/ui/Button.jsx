@@ -2,12 +2,14 @@ import { Loader2 } from "lucide-react";
 
 const variants = {
   primary:
-    "bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm shadow-emerald-700/20",
+    "bg-[#10b981] text-white hover:bg-[#059669] shadow-sm shadow-[#10b981]/20",
   secondary:
     "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50",
   danger:
     "bg-rose-600 text-white hover:bg-rose-500 shadow-sm shadow-rose-600/20",
   ghost: "text-slate-500 hover:bg-slate-100 hover:text-slate-700",
+  emerald: 
+    "bg-gradient-to-r from-emerald-900 to-emerald-500 text-white hover:from-emerald-950 hover:to-emerald-600 shadow-sm shadow-emerald-900/20",
 };
 
 const sizes = {

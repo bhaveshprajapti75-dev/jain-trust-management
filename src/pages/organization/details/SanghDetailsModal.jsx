@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Users, User, Phone, Mail, MapPin, Building2, Calendar, FileText, Activity } from 'lucide-react';
-import StatusToggle from '../../../components/common/StatusToggle';
+import StatusToggle from '../../../components/ui/StatusToggle';
 import { getTrustName } from '../orgData';
 
 export default function SanghDetailsModal({ isOpen, onClose, sangh, allData, onStatusToggle }) {

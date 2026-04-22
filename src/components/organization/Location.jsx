@@ -1,5 +1,5 @@
 import { MapPin } from 'lucide-react'
-import CommonCard from '../common/CommonCard'
+import CommonCard from '../ui/CommonCard'
 
 export default function LocationCard({ location, sanghCount, onEdit, onDelete, index = 0, onClick }) {
   return (

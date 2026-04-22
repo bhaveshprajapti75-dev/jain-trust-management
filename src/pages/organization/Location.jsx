@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { PlusCircle, SlidersHorizontal, ChevronDown, Search } from 'lucide-react'
 import LocationTable from './LocationTable'
 import { Globe2, MapPinned, Navigation, Building2, Hash } from 'lucide-react'
-import LocationPagination from './LocationPagination'
+import Pagination from '../../components/ui/Pagination'
 
 const TABS = ['Country', 'State', 'City', 'Area', 'Pincode']
 
@@ -268,10 +268,10 @@ export default function Location() {
         />
 
         <div className="mt-2">
-          <LocationPagination
+          <Pagination
             currentPage={currentPage}
-            totalItems={totalEntries}
-            itemsPerPage={itemsPerPage}
+            totalRecords={totalEntries}
+            recordsPerPage={itemsPerPage}
             onPageChange={setCurrentPage}
             onRecordsPerPageChange={(val) => { setItemsPerPage(val); setCurrentPage(1); }}
             rowsPerPageOptions={[30, 50, 100]}

@@ -23,7 +23,7 @@ import {
   Pie,
   Cell,
 } from 'recharts'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 
 const MONTHLY_TRENDS = [
   { month: 'Jan', income: 120000, expense: 80000 },

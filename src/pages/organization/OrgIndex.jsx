@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Plus, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import OrgTable from './OrgTable';
 import { getOrgData } from './orgData';
-import Pagination from '../../components/common/Pagination';
-import CommonPageLayout from '../../components/common/CommonPageLayout';
+import Pagination from '../../components/ui/Pagination';
+import CommonPageLayout from '../../components/ui/CommonPageLayout';
 import { Building2, Users, Link2 } from 'lucide-react';
 
 const TABS = ['All Organizations', 'Trust Management', 'Sangh Management'];

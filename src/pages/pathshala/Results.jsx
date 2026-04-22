@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { BarChart3, Award, BookOpen } from 'lucide-react'
-import EmptyState from '../../components/common/EmptyState'
-import CommonCard from '../../components/common/CommonCard'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import EmptyState from '../../components/ui/EmptyState'
+import CommonCard from '../../components/ui/CommonCard'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 
 const DATA = [
   { id: 1, student: 'Aarav Shah', exam: 'Monthly Jan', marks: 95, total: 100, grade: 'A+', status: 'Passed' },

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import CommonPageLayout from '../../components/common/CommonPageLayout';
-import Button from '../../components/common/Button';
+import CommonPageLayout from '../../components/ui/CommonPageLayout';
+import Button from '../../components/ui/Button';
 import TrustCard from '../../components/organization/TrustCard';
 import TrustFormModal from './forms/TrustFormModal';
 import { INITIAL_TRUSTS } from './orgData';

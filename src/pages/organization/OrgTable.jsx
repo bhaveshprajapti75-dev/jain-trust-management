@@ -1,7 +1,7 @@
 import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { Edit2, Trash2, Eye, Check, AlertTriangle } from 'lucide-react';
-import StatusToggle from '../../components/common/StatusToggle';
-import Table from '../../components/common/Table';
+import StatusToggle from '../../components/ui/StatusToggle';
+import Table from '../../components/ui/Table';
 import TrustFormModal from './forms/TrustFormModal';
 import SanghFormModal from './forms/SanghFormModal';
 import SanghDetailsModal from './details/SanghDetailsModal';

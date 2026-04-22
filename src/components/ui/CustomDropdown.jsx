@@ -67,7 +67,7 @@ export default function CustomDropdown({
   return (
   <div className={`relative ${className}`} ref={triggerRef}>
     <div
-      className={`px-3 py-2 bg-white border rounded-lg text-[13px] text-slate-700 font-medium transition-all cursor-pointer flex items-center justify-between group ${
+      className={`px-3 py-2 bg-white border rounded-lg text-[13px] text-slate-700 font-medium cursor-pointer flex items-center justify-between group ${
         isOpen
           ? "border-emerald-500"
           : "border-slate-200 hover:border-emerald-500"
@@ -83,9 +83,9 @@ export default function CustomDropdown({
       </span>
 
       {isOpen ? (
-        <ChevronUp className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+        <ChevronUp className="w-4 h-4 text-slate-400 group-hover:text-emerald-500" />
       ) : (
-        <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-emerald-500 transition-colors" />
+        <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-emerald-500" />
       )}
     </div>
 
@@ -134,7 +134,7 @@ export default function CustomDropdown({
                 return (
                   <li
                     key={`${itemValue}-${index}`}
-                    className={`px-3 py-2 text-[13px] font-medium cursor-pointer transition-all ${
+                    className={`px-3 py-2 text-[13px] font-medium cursor-pointer ${
                       selected
                         ? "bg-emerald-50 text-emerald-600"
                         : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-600"

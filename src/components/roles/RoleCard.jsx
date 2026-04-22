@@ -1,5 +1,5 @@
 import { Shield, Users, Landmark } from 'lucide-react'
-import CommonCard from '../common/CommonCard'
+import CommonCard from '../ui/CommonCard'
 
 const TYPE_ICON = { System: Shield, Sangh: Users, Trust: Landmark }
 const TYPE_STYLES = {

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Plus, Download, Pencil, Trash2, FileText, IndianRupee } from 'lucide-react'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
-import Button from '../../components/common/Button'
-import StatusBadge from '../../components/common/StatusBadge'
-import Table from '../../components/common/Table'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
+import Button from '../../components/ui/Button'
+import StatusBadge from '../../components/ui/StatusBadge'
+import Table from '../../components/ui/Table'
 
 const DONATIONS = [
   { id: 1, donorName: 'Rajesh Shah', type: 'Devdravya', amount: 51000, date: '2025-01-15', mode: 'Cheque', status: 'Verified', receiptNo: 'RCP-001' },
@@ -19,12 +19,12 @@ export default function DonationList() {
   const filtered = DONATIONS.filter((d) => d.donorName.toLowerCase().includes(search.toLowerCase()))
   
   const columns = [
-    { key: 'receiptNo', label: 'Receipt', render: (v) => <span className="text-[11px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md">{v}</span> },
-    { key: 'donorName', label: 'Donor', render: (v) => <span className="font-semibold text-slate-700">{v}</span> },
-    { key: 'type', label: 'Type', render: (v) => <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-100">{v}</span> },
-    { key: 'amount', label: 'Amount', render: (v) => <span className="font-bold text-slate-800">₹{v.toLocaleString()}</span> },
-    { key: 'date', label: 'Date', render: (v) => <span className="text-slate-500 text-sm">{v}</span> },
-    { key: 'mode', label: 'Mode', render: (v) => <span className="text-xs font-medium px-2 py-0.5 bg-slate-50 text-slate-600 rounded border border-slate-100">{v}</span> },
+    { key: 'receiptNo', label: 'Receipt', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
+    { key: 'donorName', label: 'Donor', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
+    { key: 'type', label: 'Type', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
+    { key: 'amount', label: 'Amount', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">₹{v.toLocaleString()}</span> },
+    { key: 'date', label: 'Date', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
+    { key: 'mode', label: 'Mode', render: (v) => <span className="text-[12.5px] text-[#1A1A1A]">{v}</span> },
     { key: 'status', label: 'Status', render: (v) => <StatusBadge status={v} /> },
     { key: 'actions', label: '', sortable: false, render: (_, row) => (
       <div className="flex items-center justify-end gap-1">

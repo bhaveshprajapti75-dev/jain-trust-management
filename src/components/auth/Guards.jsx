@@ -3,9 +3,10 @@ import { ROLES } from '../../config/roles'
 
 // Note: Replace with actual auth logic
 const getAuthUser = () => {
-  const role = localStorage.getItem('userRole') || ROLES.SUPER_ADMIN
+  const token = sessionStorage.getItem('token')
+  const role = sessionStorage.getItem('userRole')
   return {
-    isAuthenticated: true, 
+    isAuthenticated: !!token,
     role: role
   }
 }
@@ -23,8 +24,16 @@ export function ProtectedRoute() {
 export function RoleGuard({ allowedRoles }) {
   const user = getAuthUser()
 
+  console.log('RoleGuard Check:', {
+    userRole: user.role,
+    allowedRoles: allowedRoles,
+    isAllowed: allowedRoles.includes(user.role)
+  });
+
   if (!allowedRoles.includes(user.role)) {
-    if (user.role === ROLES.SANGH_ADMIN) return <Navigate to="/sangh-admin" replace />
+    if (user.role === ROLES.SANGH_ADMIN) {
+      return <Navigate to="/sangh-admin" replace />
+    }
     return <Navigate to="/" replace />
   }
 

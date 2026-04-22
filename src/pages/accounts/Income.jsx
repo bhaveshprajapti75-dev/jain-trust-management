@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
 import { TrendingUp, Receipt, Plus } from 'lucide-react'
-import Button from '../../components/common/Button'
-import EmptyState from '../../components/common/EmptyState'
-import CommonCard from '../../components/common/CommonCard'
-import CommonPageLayout from '../../components/common/CommonPageLayout'
+import Button from '../../components/ui/Button'
+import EmptyState from '../../components/ui/EmptyState'
+import CommonCard from '../../components/ui/CommonCard'
+import CommonPageLayout from '../../components/ui/CommonPageLayout'
 
 const DATA = [
   { id: 1, head: 'General Donation', source: 'Sathandji Kalyanji Sangh', amount: '?1,25,000', date: '2026-04-01', status: 'Active' },

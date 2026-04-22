@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function DatePicker({ label, value, onChange, icon: Icon = Calendar, placeholder = "Select date" }) {
+export default function DatePicker({ label, value, onChange, icon: Icon = Calendar, placeholder = "Select date", disabled = false }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [openUp, setOpenUp] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0, width: 0, openUp: false });
   const containerRef = useRef(null);
+  const portalRef = useRef(null);
 
   // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
+      if (
+        containerRef.current && 
+        !containerRef.current.contains(event.target) &&
+        (!portalRef.current || !portalRef.current.contains(event.target))
+      ) {
         setIsOpen(false);
       }
     }
@@ -18,9 +24,18 @@ export default function DatePicker({ label, value, onChange, icon: Icon = Calend
   }, []);
 
   const handleToggle = () => {
+    if (disabled) return;
     if (!isOpen && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      setOpenUp(window.innerHeight - rect.bottom < 320); // 320px is calendar height approx
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const shouldOpenUp = spaceBelow < 340 && rect.top > 340; // 340px for calendar height + margin
+      
+      setCoords({
+        top: shouldOpenUp ? rect.top : rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        openUp: shouldOpenUp
+      });
     }
     setIsOpen(!isOpen);
   };
@@ -38,8 +53,10 @@ export default function DatePicker({ label, value, onChange, icon: Icon = Calend
       {label && <label className="block text-[13px] font-medium text-slate-700 mb-1.5 ml-1">{label}</label>}
       <button 
         type="button"
+        disabled={disabled}
         onClick={handleToggle}
-        className="w-full h-[36px] bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-left flex items-center justify-between group hover:border-emerald-600 hover:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-50"
+        className={`w-full h-[36px] bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-left flex items-center justify-between group transition-all outline-none 
+          ${disabled ? 'cursor-not-allowed opacity-60' : 'hover:border-emerald-600 hover:bg-white focus:ring-4 focus:ring-emerald-50'}`}
       >
         <span className={value ? "text-slate-700 font-medium" : "text-slate-400"}>
           {value || placeholder}
@@ -47,10 +64,19 @@ export default function DatePicker({ label, value, onChange, icon: Icon = Calend
         <Icon className="w-[18px] h-[18px] text-slate-400 group-hover:text-emerald-600 transition-colors" />
       </button>
 
-      {isOpen && (
-        <div className={`absolute left-0 z-[60] w-72 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-4 animate-in fade-in zoom-in-95 duration-200 ${openUp ? "bottom-full mb-2" : "top-full mt-2"}`}>
+      {isOpen && createPortal(
+        <div 
+          ref={portalRef}
+          className={`fixed z-[10000] w-72 bg-white rounded-2xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-4 animate-in fade-in zoom-in-95 duration-200 ${coords.openUp ? "mb-2" : "mt-2"}`}
+          style={{
+            top: coords.openUp ? "auto" : coords.top,
+            bottom: coords.openUp ? window.innerHeight - coords.top : "auto",
+            left: Math.min(coords.left, window.innerWidth - 300), // Ensure it doesnt go off screen right
+          }}
+        >
            <CalendarGrid onSelect={handleSelect} initialValue={value} />
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -2,8 +2,8 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Briefcase, Plus } from 'lucide-react';
 import { INITIAL_DEPARTMENTS } from './orgData';
-import CommonPageLayout from '../../components/common/CommonPageLayout';
-import Button from '../../components/common/Button';
+import CommonPageLayout from '../../components/ui/CommonPageLayout';
+import Button from '../../components/ui/Button';
 
 export default function Departments() {
   const navigate = useNavigate();

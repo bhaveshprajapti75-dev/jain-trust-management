@@ -1,5 +1,5 @@
 import { Landmark } from 'lucide-react'
-import CommonCard from '../common/CommonCard'
+import CommonCard from '../ui/CommonCard'
 
 export default function TrustCard({ trust, sanghCount, onEdit, onDelete, index = 0, onClick }) {
   return (

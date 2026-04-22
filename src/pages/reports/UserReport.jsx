@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import PageHeader from '../../components/common/PageHeader';
-import Card from '../../components/common/Card';
-import Table from '../../components/common/Table';
-import SearchBar from '../../components/common/SearchBar';
+import PageHeader from '../../components/ui/PageHeader';
+import Card from '../../components/ui/Card';
+import Table from '../../components/ui/Table';
+import SearchBar from '../../components/ui/SearchBar';
 
 export default function UserReport() {
   const [search, setSearch] = useState('');

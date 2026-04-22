@@ -32,18 +32,18 @@ export default function StatCard({ title, value, icon: Icon, trend, trendValue, 
   const isPositive = trend === 'up'
   const containerPadding = compact ? 'p-3.5' : 'p-4'
   const valueTextSize = compact ? 'text-2xl' : 'text-[28px]'
-  const valueWeight = compact ? 'font-semibold' : 'font-bold'
+  const valueWeight = 'font-bold'
   const iconWrap = compact ? 'w-10 h-10 rounded-md' : 'w-11 h-11 rounded-lg'
   const iconSize = compact ? 'w-5 h-5' : 'w-5 h-5'
 
   return (
     <div className={`bg-white rounded-lg ${containerPadding} flex items-center justify-between gap-4 shadow-sm ${className}`}>
       <div className="min-w-0 flex-1">
-        <p className="text-[12px] text-zinc-900 font-medium truncate">{title}</p>
+        <p className="text-[12.5px] text-[#1A1A1A] font-normal truncate">{title}</p>
         <div className="mt-1.5 flex items-center gap-2.5">
-          <p className={`${valueTextSize} ${valueWeight} text-slate-900 leading-none`}>{value}</p>
+          <p className={`${valueTextSize} ${valueWeight} text-[#1A1A1A] leading-none`}>{value}</p>
           {trendValue !== undefined && (
-            <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${isPositive ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
+            <span className={`inline-flex items-center gap-1 text-sm font-bold px-2 py-0.5 rounded-full ${isPositive ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}`}>
               {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />} {trendValue}
             </span>
           )}
