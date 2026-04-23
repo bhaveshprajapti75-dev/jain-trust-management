@@ -47,31 +47,48 @@ export const apiService = {
 export const authService = {
   login: async (credentials) => {
     try {
-      // Dummy Super Admin Bypass for Testing
-      if (credentials.email?.trim().toLowerCase() === 'superadmin@jainsangh.com' && credentials.password === 'superadmin123') {
+      const normalizedEmail = credentials.email?.trim().toLowerCase();
+
+      // Dummy auth bypass for local testing roles.
+      const dummyUsers = {
+        'superadmin@jainsangh.com': {
+          password: 'superadmin123',
+          token: 'dummy-token-super-admin',
+          normalizedRole: ROLES.SUPER_ADMIN,
+          fullName: 'Super Admin',
+          id: 'dummy-super-admin-id'
+        },
+        'sanghadmin@jainsangh.com': {
+          password: 'sanghadmin123',
+          token: 'dummy-token-sangh-admin',
+          normalizedRole: ROLES.SANGH_ADMIN,
+          fullName: 'Sangh Admin',
+          id: 'dummy-sangh-admin-id'
+        }
+      };
+
+      const dummyUser = dummyUsers[normalizedEmail];
+      if (dummyUser && credentials.password === dummyUser.password) {
         const dummyResponse = {
-          tokens: { access: 'dummy-token-super-admin' },
-          role: 'super_admin',
+          tokens: { access: dummyUser.token },
+          role: dummyUser.normalizedRole,
           user: {
-            id: 'dummy-id',
-            full_name: 'Super Admin',
-            role: 'super_admin'
+            id: dummyUser.id,
+            full_name: dummyUser.fullName,
+            role: dummyUser.normalizedRole
           }
         };
-        
-        const token = dummyResponse.tokens.access;
-        const normalizedRole = ROLES.SUPER_ADMIN; 
-        
-        sessionStorage.setItem('token', token);
-        sessionStorage.setItem('userRole', normalizedRole);
-        sessionStorage.setItem('userName', dummyResponse.user.full_name);
-        sessionStorage.setItem('userId', dummyResponse.user.id);
-        
+
+        sessionStorage.setItem('token', dummyUser.token);
+        sessionStorage.setItem('userRole', dummyUser.normalizedRole);
+        sessionStorage.setItem('userName', dummyUser.fullName);
+        sessionStorage.setItem('userId', dummyUser.id);
+
         return {
           ...dummyResponse,
-          normalizedRole,
-          token,
-          role: normalizedRole
+          normalizedRole: dummyUser.normalizedRole,
+          token: dummyUser.token,
+          role: dummyUser.normalizedRole
         };
       }
 

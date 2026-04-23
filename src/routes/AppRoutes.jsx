@@ -137,10 +137,12 @@ export default function AppRoutes() {
             <Route path="activities/meetings" element={<Meetings />} />
             <Route path="activities/attendance" element={<Attendance />} />
             <Route path="activities/daily-work" element={<DailyWork />} />
+            <Route path="*" element={<Navigate to="/sangh-admin" replace />} />
           </Route>
         </Route>
       </Route>
       <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }
